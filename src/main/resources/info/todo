@@ -20,7 +20,7 @@ Noi vogliamo delle liste di professori e studenti ma torniamo una ClasseEntity, 
 Inoltre al momento se metto una classe non esistente va in errore.
 
 
-6)
+6) Implementare @Transactional su alcuni metodi ( da vedere assieme )
 
 
 
