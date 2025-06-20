@@ -121,5 +121,13 @@ public class StudenteController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+    
+    //Assegna una classe a uno studente
+    @PutMapping("/{studenteId}/classe/{classeId}")
+    public ResponseEntity<StudenteResponse> assegnaClasseAStudente(@PathVariable Long studenteId,
+                                                                @PathVariable Long classeId) throws NotFoundException {
+    StudenteResponse updated = studenteService.assegnaClasse(studenteId, classeId);
+    return ResponseEntity.ok(updated);
+}
 
 }

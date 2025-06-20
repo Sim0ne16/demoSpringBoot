@@ -6,9 +6,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
+
 import java.util.List;
-import java.util.Set;
+
 
 // Le entity vanno marcate con @Entity, le repository con @Repository etc con service e controller
 
@@ -21,6 +21,8 @@ import java.util.Set;
 @Builder
 // e' buona cosa specificare la tabella di riferimento lato DB cosi' da avere piu' controllo
 //@Table(name = "studenti")
+
+@Table(name="classi")
 public class ClasseEntity {
 
     @Id

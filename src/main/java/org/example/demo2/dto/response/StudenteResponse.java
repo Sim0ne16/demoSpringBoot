@@ -6,12 +6,13 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class StudenteResponse {
 
-    // Se vogliamo ignorare un campo usiamo @JsonBackReference
+    // Se vogliamo ignorare un campo usiamo @JsonBackReference 
 
     private Long id;
     private String nome;
@@ -19,5 +20,7 @@ public class StudenteResponse {
     private int eta;
     private LocalDateTime dataNascita;
     private ClasseResponse classe;
+
+    private Long classeId;
 
 }

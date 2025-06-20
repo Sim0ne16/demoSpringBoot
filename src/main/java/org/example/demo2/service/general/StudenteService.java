@@ -17,5 +17,7 @@ public interface StudenteService{
     List<StudenteResponse> getAll();
     StudenteResponse getByNameAndLastName(String nome, String cognome) throws NotFoundException;
     void delete(Long id) throws NotFoundException;
+    
+    StudenteResponse assegnaClasse(Long studenteId, Long classeId) throws NotFoundException;
 
 }

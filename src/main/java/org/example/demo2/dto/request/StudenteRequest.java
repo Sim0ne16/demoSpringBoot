@@ -46,4 +46,10 @@ public class StudenteRequest {
 
     private LocalDateTime dataNascita;
 
+     @NotNull(message = "La classe è obbligatoria")
+    
+     private Long classeId;
+
+    
+
 }

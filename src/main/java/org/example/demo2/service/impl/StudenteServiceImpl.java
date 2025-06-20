@@ -1,7 +1,10 @@
 package org.example.demo2.service.impl;
 
 import lombok.RequiredArgsConstructor;
+
+import org.example.demo2.dao.entity.ClasseEntity;
 import org.example.demo2.dao.entity.StudenteEntity;
+import org.example.demo2.dao.repository.ClasseRepository;
 import org.example.demo2.dao.repository.StudenteRepository;
 import org.example.demo2.dto.request.StudenteRequest;
 import org.example.demo2.dto.response.StudenteResponse;
@@ -21,12 +24,13 @@ public class StudenteServiceImpl implements StudenteService {
     private final StudenteRepository studenteRepository;
     private final StudenteRequestMapper studenteRequestMapper;
     private final StudenteResponseMapper studenteResponseMapper;
+    private final ClasseRepository classeRepository;
 
     @Override
     public StudenteResponse insert(StudenteRequest studenteRequest) {
         StudenteEntity studenteEntity = studenteRequestMapper.fromReToEntity(studenteRequest);
-        studenteRepository.save(studenteEntity);
-        return studenteResponseMapper.fromEntityToRe(studenteEntity);
+        StudenteEntity savedEntity = studenteRepository.save(studenteEntity);
+        return studenteResponseMapper.fromEntityToRe(savedEntity);
     }
 
     // Due esempi di getById
@@ -54,11 +58,12 @@ public class StudenteServiceImpl implements StudenteService {
         StudenteEntity studenteEntity = studenteRepository.findById(studenteRequest.getId())
                 .orElseThrow(() -> new NotFoundException("Studente non esistente"));
 
-        // updateEntityFromDto è un metodo del mapper che aggiorna solo i campi necessari.
+        // updateEntityFromDto è un metodo del mapper che aggiorna solo i campi
+        // necessari.
         studenteRequestMapper.updateEntityFromDto(studenteRequest, studenteEntity);
         studenteRepository.save(studenteEntity);
 
-        return studenteResponseMapper.fromEntityToRe(studenteEntity );
+        return studenteResponseMapper.fromEntityToRe(studenteEntity);
     }
 
     @Override
@@ -94,5 +99,24 @@ public class StudenteServiceImpl implements StudenteService {
         }
 
         return studenteResponseMapper.fromEntityToRe(studenteEntity.get());
+    }
+
+    @Override
+    public StudenteResponse assegnaClasse(Long studenteId, Long classeId) throws NotFoundException {
+        // Recupera lo studente
+        StudenteEntity studente = studenteRepository.findById(studenteId)
+                .orElseThrow(() -> new NotFoundException("Studente non trovato"));
+
+        // Recupera la classe
+        ClasseEntity classe = classeRepository.findById(classeId)
+                .orElseThrow(() -> new NotFoundException("Classe non trovata"));
+
+        // Assegna la classe allo studente
+        studente.setClasse(classe);
+
+        // Salva
+        StudenteEntity updated = studenteRepository.save(studente);
+
+        return studenteResponseMapper.fromEntityToRe(updated);
     }
 }

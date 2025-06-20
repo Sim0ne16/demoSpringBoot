@@ -10,7 +10,9 @@ import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface StudenteResponseMapper extends GeneralRestMapper<StudenteEntity, StudenteResponse> {
+
     @Override
+    @Mapping(target = "classeId", expression = "java(entity.getClasse() != null ? entity.getClasse().getId() : null)")
     @Mapping(ignore = true, target = "classe.studenti")
     StudenteResponse fromEntityToRe(StudenteEntity entity);
 
