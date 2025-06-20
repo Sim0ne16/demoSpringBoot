@@ -33,24 +33,16 @@ public class StudenteServiceImpl implements StudenteService {
         return studenteResponseMapper.fromEntityToRe(savedEntity);
     }
 
-    // Due esempi di getById
-    @Override
-    public StudenteResponse getById(Long id) throws NotFoundException {
-        Optional<StudenteEntity> studenteEntityOptional = studenteRepository.findById(id);
-
-        if (studenteEntityOptional.isPresent()) {
-            return studenteResponseMapper.fromEntityToRe(studenteEntityOptional.get());
-        } else {
-            throw new NotFoundException("Studente non trovato");
-        }
-    }
-
     // Preferibile utilizzare questo per via del .orElseThrow
     @Override
-    public StudenteResponse getById2(Long id) throws NotFoundException {
+    public StudenteResponse getById(Long id, boolean includeClasse) throws NotFoundException {
         StudenteEntity studenteEntity = studenteRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Studente non trovato"));
-        return studenteResponseMapper.fromEntityToRe(studenteEntity);
+
+
+        return includeClasse
+                ? studenteResponseMapper.fromEntityToRe(studenteEntity)
+                : studenteResponseMapper.fromEntityToReSimple(studenteEntity);
     }
 
     @Override
@@ -67,15 +59,6 @@ public class StudenteServiceImpl implements StudenteService {
     }
 
     @Override
-    public StudenteResponse update2(StudenteRequest studenteRequest) throws NotFoundException {
-        if (!studenteRepository.existsById(studenteRequest.getId())) {
-            throw new NotFoundException("Studente non esistente");
-        }
-        StudenteEntity entityUpdated = studenteRepository.save(studenteRequestMapper.fromReToEntity(studenteRequest));
-        return studenteResponseMapper.fromEntityToRe(entityUpdated);
-    }
-
-    @Override
     public void delete(Long id) throws NotFoundException {
         if (!studenteRepository.existsById(id)) {
             throw new NotFoundException("Studente non esistente");
@@ -84,9 +67,12 @@ public class StudenteServiceImpl implements StudenteService {
     }
 
     @Override
-    public List<StudenteResponse> getAll() {
-        List<StudenteEntity> studenti = studenteRepository.findAll();
-        return studenteResponseMapper.fromEntityListToReList(studenti);
+    public List<StudenteResponse> getAll(boolean includeClasse) {
+        List<StudenteEntity> studentiEntity = studenteRepository.findAll();
+
+        return includeClasse
+                ? studenteResponseMapper.fromEntityListToReList(studentiEntity)
+                : studenteResponseMapper.fromEntityListToReListSimple(studentiEntity);
     }
 
     @Override

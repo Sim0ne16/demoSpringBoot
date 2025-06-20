@@ -1,6 +1,7 @@
 package org.example.demo2.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.Response;
 import org.example.demo2.dto.request.StudenteRequest;
 import org.example.demo2.dto.response.StudenteResponse;
 import org.example.demo2.service.general.StudenteService;
@@ -8,7 +9,9 @@ import org.example.demo2.utils.exception.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController // Combinazione di @Controller e @ResponseBody
@@ -16,13 +19,22 @@ import java.util.List;
 @RequestMapping("/studente") // A quale indirizzo e' mappata la nostra API
 public class StudenteController {
 
+    /*
+    Quando usare PathVariable e quando RequestParam :
+
+    ID risorsa (es. id, uuid)	    @PathVariable
+    Filtri, query, pagine, sort	    @RequestParam
+    Risorse annidate	            @PathVariable
+    Parametri opzionali	            @RequestParam
+    */
+
     private final StudenteService studenteService;
 
     // Con il verbo Get indichiamo la ricezione di dati dal Database
     @GetMapping
-    private ResponseEntity<List<StudenteResponse>> getAllStudenti() {
-        List<StudenteResponse> studentiResponse = studenteService.getAll();
-        return new ResponseEntity<>(studentiResponse, HttpStatus.OK);
+    private ResponseEntity<List<StudenteResponse>> getAllStudenti(@RequestParam(required = false, defaultValue = "false") boolean includeClasse) {
+        List<StudenteResponse> studentiResponse = studenteService.getAll(includeClasse);
+        return ResponseEntity.ok(studentiResponse);
     }
 
     /*
@@ -31,16 +43,12 @@ public class StudenteController {
      * parametro nel metodo --> in questo caso {id}
      */
     @GetMapping(path = "/{id}")
-    private ResponseEntity<StudenteResponse> getStudentById(@PathVariable Long id) {
-        try {
-            StudenteResponse studenteResponse = studenteService.getById(id);
-            return new ResponseEntity<>(studenteResponse, HttpStatus.OK);
-        } catch (NotFoundException e) {
-            //e' buona pratica loggare il perche' dell'errore etc
-            // logger.info("Chiamata esplosa perche'...)
-            e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+    private ResponseEntity<StudenteResponse> getStudentById(
+            @PathVariable Long id,
+            @RequestParam(required = false, defaultValue = "false") boolean includeClasse
+    ) throws NotFoundException {
+        StudenteResponse studenteResponse = studenteService.getById(id, includeClasse);
+        return ResponseEntity.ok(studenteResponse);
     }
 
     // esempio di sintassi di chiamata -> http://localhost:8080/studente/Mario/Rossi
@@ -49,10 +57,10 @@ public class StudenteController {
                                                                   @PathVariable("lastName") String lastName) {
         try {
             StudenteResponse studenteResponse = studenteService.getByNameAndLastName(name, lastName);
-            return new ResponseEntity<>(studenteResponse, HttpStatus.OK);
+            return ResponseEntity.ok(studenteResponse);
         } catch (NotFoundException e) {
             e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return ResponseEntity.notFound().build();
         }
     }
 
@@ -73,7 +81,7 @@ public class StudenteController {
             return new ResponseEntity<>(studenteResponse, HttpStatus.OK);
         } catch (NotFoundException e) {
             e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return ResponseEntity.notFound().build();
         }
     }
 
@@ -90,8 +98,33 @@ public class StudenteController {
     private ResponseEntity<StudenteResponse> postStudente(@RequestBody StudenteRequest studenteRequest) {
         //StudenteValidator.validate(studenteRequest)
         StudenteResponse studenteResponse = studenteService.insert(studenteRequest);
-        return new ResponseEntity<>(studenteResponse, HttpStatus.CREATED);
+
+        /*
+        Perché tornare l'URI?
+        Standard HTTP:
+        La specifica HTTP dice che, dopo aver creato una risorsa (ad esempio con un POST), il server dovrebbe restituire lo status 201 Created
+        e includere nel campo header Location l'URI della nuova risorsa.
+
+        Comunicazione chiara al client:
+        Il client sa esattamente dove può trovare o accedere a quella risorsa creata.
+        Ad esempio, se crei un nuovo utente, l'URI potrebbe essere qualcosa come /users/123.
+        Tornare quell’URI aiuta il client a fare subito operazioni future su quell’utente (GET, PUT, DELETE).
+
+        Best practice RESTful:
+        In un’API RESTful ben progettata, risorse e URI sono fondamentali per la navigazione e manipolazione.
+        Restituire l’URI della risorsa è una buona prassi per favorire l’auto-documentazione dell’API e la facilità d’uso.
+        */
+
+        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(studenteResponse.getId())
+                .toUri();
+
+
+        return ResponseEntity.created(location).build();
     }
+
+
 
     /*
      * Il verbo Put indica un update dell'entità nel database, a differenza della
@@ -106,7 +139,7 @@ public class StudenteController {
             return new ResponseEntity<>(studenteResponse, HttpStatus.OK);
         } catch (NotFoundException e) {
             e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return ResponseEntity.notFound().build();
         }
     }
 

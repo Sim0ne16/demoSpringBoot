@@ -1,6 +1,8 @@
 
 TODO LIST :
 
+
+
 1 ) Testare tutte le API
 
 2 ) La data deve essere in formato  YYYY-MM-DD
@@ -22,6 +24,43 @@ Inoltre al momento se metto una classe non esistente va in errore.
 
 6) Implementare @Transactional su alcuni metodi ( da vedere assieme )
 
+7) StudenteResponseMapper ->     @Mapping(target = "classeId", expression = "java(entity.getClasse() != null ? entity.getClasse().getId() : null)")
+    Dobbiamo lavorare dando per scontato che uno studente ha SEMPRE una classe
 
 
-e sopratutto RALLENTA!!!!
+8) Normalizza i mapper dello studente :
+ StudenteRequestMapper -> Prima cosa, non dovresti mettere funzioni nei mapper, seconda cosa, adesso la risposta ad una API legata a StudenteResponse è questa :
+ StudenteResponseMapper -> Riga 15
+ StudenteResponse -> la classeId...
+ Occhio che ora quando chiamo la getAll e i professori sono valorizzati scoppia..
+[
+  {
+    "id": 1,
+    "nome": "Piergiorgio",
+    "cognome": "Giorgio",
+    "eta": 18,
+    "dataNascita": [
+      1997,
+      12,
+      24,
+      0,
+      0
+    ],
+    "classe": {
+      "id": 1,
+      "identificativo": "C",
+      "grado": "5",
+      "professori": []
+    },
+    "classeId": 1   -> PERCHè?
+  }
+]
+..Inoltre ho apportato delle modifiche a StudenteResponseMapper.. capiscile e propagale
+
+9) Ho modificato cosa tornano i controller in StudenteController, dai un occhio e omologa
+
+10) Direi di levare il campo eta' ... non ha senso.. abbiamo la data di nascita l'eta' ce la ricaviamo
+
+
+
+

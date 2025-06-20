@@ -12,7 +12,6 @@ public interface GeneralRestMapper<E,R> {
 
     //Nei mapper va ignorato il campo della relazione altrimenti si va in loop infinito
 
-
     R fromEntityToRe(E entity);
     E fromReToEntity(R re);
     List<R> fromEntityListToReList(List<E> entityList);

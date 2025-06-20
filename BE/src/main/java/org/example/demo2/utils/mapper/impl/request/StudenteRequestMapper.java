@@ -32,6 +32,7 @@ public interface StudenteRequestMapper extends GeneralRestMapper<StudenteEntity,
     @Override
     List<StudenteEntity> fromReListToEntityList(List<StudenteRequest> reList);
 
+    // NO - Mi piace che hai commentato ma perchè ti sei complicato la vita?
     // Metodo di supporto per assegnare l'oggetto ClasseEntity da classeId
     default ClasseEntity fromClasseId(Long classeId) {
         if (classeId == null) {
@@ -41,4 +42,6 @@ public interface StudenteRequestMapper extends GeneralRestMapper<StudenteEntity,
         classe.setId(classeId);
         return classe;
     }
+
+
 }

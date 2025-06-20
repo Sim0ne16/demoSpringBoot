@@ -10,11 +10,9 @@ public interface StudenteService{
 
 
     StudenteResponse insert(StudenteRequest studenteRequest);
-    StudenteResponse getById(Long id) throws NotFoundException;
-    StudenteResponse getById2(Long id) throws NotFoundException;
+    StudenteResponse getById(Long id, boolean includeClasse) throws NotFoundException;
     StudenteResponse update1(StudenteRequest studenteRequest) throws NotFoundException;
-    StudenteResponse update2(StudenteRequest studenteRequest) throws NotFoundException;
-    List<StudenteResponse> getAll();
+    List<StudenteResponse> getAll(boolean includeClasse);
     StudenteResponse getByNameAndLastName(String nome, String cognome) throws NotFoundException;
     void delete(Long id) throws NotFoundException;
     
