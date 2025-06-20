@@ -1,0 +1,24 @@
+.loading-backdrop {
+  visibility: hidden;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100vw;
+  height: 100vh;
+
+  z-index: 9999;
+  position: fixed;
+  background-color: rgba(0, 0, 0, 0.6);
+  top: 0;
+  opacity: 0;
+  transition: opacity 0.6s, visibility 0.6s;
+  -webkit-transition: opacity 0.6s, visibility 0.6s;
+}
+
+.loading-show {
+  visibility: visible;
+  opacity: 1;
+  transition: opacity 0.6s, visibility 0.6s;
+  -webkit-transition: opacity 0.6s, visibility 0.6s;
+}
