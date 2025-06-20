@@ -19,4 +19,5 @@ public interface ClasseRepository extends JpaRepository<ClasseEntity, Long> {
 
     @Query("SELECT c FROM ClasseEntity c LEFT JOIN FETCH c.professori WHERE c.id = :id")
     Optional<ClasseEntity> findByIdWithProfessori(@Param("id") Long id);
+
 }

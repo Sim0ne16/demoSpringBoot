@@ -55,7 +55,7 @@ public class ProfessoreController {
     // Assegna una classe a un professore
     @PutMapping("/{professoreId}/classi/{classeId}")
     public ResponseEntity<ProfessoreResponse> assegnaClasseAProfessore(@PathVariable Long professoreId,
-            @PathVariable Long classeId) throws NotFoundException {
+                                                                       @PathVariable Long classeId) throws NotFoundException {
         ProfessoreResponse updated = professoreService.assegnaClasse(professoreId, classeId);
         return ResponseEntity.ok(updated);
     }

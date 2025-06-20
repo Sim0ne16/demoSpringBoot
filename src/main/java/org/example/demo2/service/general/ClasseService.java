@@ -22,6 +22,4 @@ public interface ClasseService extends CrudService<ClasseEntity> {
 
     void delete(Long id) throws NotFoundException;
 
-
-
 }

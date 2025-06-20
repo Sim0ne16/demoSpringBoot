@@ -33,8 +33,8 @@ public class StudenteController {
     @GetMapping(path = "/{id}")
     private ResponseEntity<StudenteResponse> getStudentById(@PathVariable Long id) {
         try {
-            StudenteResponse athlete = studenteService.getById(id);
-            return new ResponseEntity<>(athlete, HttpStatus.OK);
+            StudenteResponse studenteResponse = studenteService.getById(id);
+            return new ResponseEntity<>(studenteResponse, HttpStatus.OK);
         } catch (NotFoundException e) {
             //e' buona pratica loggare il perche' dell'errore etc
             // logger.info("Chiamata esplosa perche'...)
@@ -46,7 +46,7 @@ public class StudenteController {
     // esempio di sintassi di chiamata -> http://localhost:8080/studente/Mario/Rossi
     @GetMapping(path = "/{name}/{lastName}")
     private ResponseEntity<StudenteResponse> getByNameAndLastName(@PathVariable("name") String name,
-            @PathVariable("lastName") String lastName) {
+                                                                  @PathVariable("lastName") String lastName) {
         try {
             StudenteResponse studenteResponse = studenteService.getByNameAndLastName(name, lastName);
             return new ResponseEntity<>(studenteResponse, HttpStatus.OK);
@@ -80,7 +80,7 @@ public class StudenteController {
     /*
      * Il vero Post indica un inserimento di dati nel database, dobbiamo fornire un
      * Body nella richiesta e l'annotations
-     * 
+     *
      * @RequestBody server per convertire il Json che arriva in una classe
      * comprensibile a Java, i campi nel Json devono
      * corrispondere ai campi che abbiamo definito nella classe java (in questo caso
@@ -121,13 +121,13 @@ public class StudenteController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
-    
+
     //Assegna una classe a uno studente
     @PutMapping("/{studenteId}/classe/{classeId}")
     public ResponseEntity<StudenteResponse> assegnaClasseAStudente(@PathVariable Long studenteId,
-                                                                @PathVariable Long classeId) throws NotFoundException {
-    StudenteResponse updated = studenteService.assegnaClasse(studenteId, classeId);
-    return ResponseEntity.ok(updated);
-}
+                                                                   @PathVariable Long classeId) throws NotFoundException {
+        StudenteResponse updated = studenteService.assegnaClasse(studenteId, classeId);
+        return ResponseEntity.ok(updated);
+    }
 
 }
