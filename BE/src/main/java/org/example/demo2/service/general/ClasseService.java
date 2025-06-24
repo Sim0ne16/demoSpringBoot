@@ -1,13 +1,12 @@
 package org.example.demo2.service.general;
 
-import org.example.demo2.dao.entity.ClasseEntity;
 import org.example.demo2.dto.request.ClasseRequest;
 import org.example.demo2.dto.response.ClasseResponse;
 import org.example.demo2.utils.exception.NotFoundException;
 
 import java.util.List;
 
-public interface ClasseService extends CrudService<ClasseEntity> {
+public interface ClasseService {
     ClasseResponse insert(ClasseRequest classeRequest);
 
     ClasseResponse getById(Long id) throws NotFoundException;

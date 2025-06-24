@@ -2,7 +2,6 @@ package org.example.demo2.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.example.demo2.dto.request.ProfessoreRequest;
-import org.example.demo2.dto.response.ClasseResponse;
 import org.example.demo2.dto.response.ProfessoreResponse;
 import org.example.demo2.service.general.ProfessoreService;
 import org.example.demo2.utils.exception.NotFoundException;

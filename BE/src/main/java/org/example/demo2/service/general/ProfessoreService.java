@@ -1,7 +1,6 @@
 package org.example.demo2.service.general;
 
 import org.example.demo2.dto.request.ProfessoreRequest;
-import org.example.demo2.dto.response.ClasseResponse;
 import org.example.demo2.dto.response.ProfessoreResponse;
 import org.example.demo2.utils.exception.NotFoundException;
 

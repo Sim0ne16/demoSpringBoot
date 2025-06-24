@@ -6,7 +6,6 @@ import org.example.demo2.dao.entity.ProfessoreEntity;
 import org.example.demo2.dao.repository.ClasseRepository;
 import org.example.demo2.dao.repository.ProfessoreRepository;
 import org.example.demo2.dto.request.ProfessoreRequest;
-import org.example.demo2.dto.response.ClasseResponse;
 import org.example.demo2.dto.response.ProfessoreResponse;
 import org.example.demo2.service.general.ProfessoreService;
 import org.example.demo2.utils.exception.NotFoundException;

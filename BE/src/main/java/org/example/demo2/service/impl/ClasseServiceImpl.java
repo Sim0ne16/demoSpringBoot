@@ -25,14 +25,12 @@ public class ClasseServiceImpl implements ClasseService {
     private final StudenteResponseMapper studenteResponseMapper;
     private final ProfessoreResponseMapper professoreResponseMapper;
 
-    @Override
     public ClasseResponse insert(ClasseRequest classeRequest) {
         ClasseEntity classeEntity = classeRequestMapper.fromReToEntity(classeRequest);
         classeRepository.save(classeEntity);
         return classeResponseMapper.fromEntityToRe(classeEntity, studenteResponseMapper, professoreResponseMapper);
     }
 
-    @Override
     public ClasseResponse update1(ClasseRequest classeRequest) throws NotFoundException {
         ClasseEntity classeEntity = classeRepository.findById(classeRequest.getId())
                 .orElseThrow(() -> new NotFoundException("Classe non esistente"));
@@ -43,21 +41,19 @@ public class ClasseServiceImpl implements ClasseService {
         return classeResponseMapper.fromEntityToRe(classeEntity, studenteResponseMapper, professoreResponseMapper);
     }
 
-    @Override
     public List<ClasseResponse> getAll(boolean includeStudenti, boolean includeProfessori) {
         List<ClasseEntity> classi = classeRepository.findAll();
         List<ClasseResponse> response = classeResponseMapper.fromEntityListToReList(classi, studenteResponseMapper, professoreResponseMapper);
 
-        if(!includeStudenti)
+        if (!includeStudenti)
             response.forEach(c -> c.setStudenti(null));
 
-        if(!includeProfessori)
+        if (!includeProfessori)
             response.forEach(c -> c.setProfessori(null));
 
         return response;
     }
 
-    @Override
     public void delete(Long id) throws NotFoundException {
         if (!classeRepository.existsById(id)) {
             throw new NotFoundException("Classe non esistente");
@@ -65,12 +61,10 @@ public class ClasseServiceImpl implements ClasseService {
         classeRepository.deleteById(id);
     }
 
-    @Override
     public ClasseEntity insert(ClasseEntity dto) {
         return classeRepository.save(dto);
     }
 
-    @Override
     public ClasseEntity update(ClasseEntity dto) throws NotFoundException {
         if (!classeRepository.existsById(dto.getId())) {
             throw new NotFoundException("Classe non esistente");
@@ -78,7 +72,6 @@ public class ClasseServiceImpl implements ClasseService {
         return classeRepository.save(dto);
     }
 
-    @Override
     public ClasseResponse getStudentList(Long classeId) throws NotFoundException {
         ClasseEntity classe = classeRepository.findByIdWithStudenti(classeId)
                 .orElseThrow(() -> new NotFoundException("Classe non trovata"));
@@ -91,7 +84,6 @@ public class ClasseServiceImpl implements ClasseService {
         return response;
     }
 
-    @Override
     public ClasseResponse getProfessori(Long classeId) throws NotFoundException {
         ClasseEntity classe = classeRepository.findByIdWithProfessori(classeId)
                 .orElseThrow(() -> new NotFoundException("Classe non trovata"));
@@ -108,7 +100,6 @@ public class ClasseServiceImpl implements ClasseService {
         return response;
     }
 
-    @Override
     public ClasseResponse getById(Long id) throws NotFoundException {
         ClasseEntity classe = classeRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Classe non trovata"));

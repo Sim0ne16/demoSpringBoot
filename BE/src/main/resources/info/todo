@@ -2,61 +2,17 @@
 TODO LIST :
 
 
-1) Testare tutte le API
+1) Far funzionare tutte le POST,PUT,DELETE poi passare alle altre... PRENDI COME ESEMPIO STUDENTE CONTROLLER SU ALCUNI PUNTI DI VISTA
 
-3) Nei mapper creare dei metodi per tornare una response base e una completa ( esempio studente con tutte le informazioni inclusa la classe e senza )
+Per modus operandi ti consiglio di partire da un'entità, completare i test su quella e poi passare alla successiva.
 
-4) Modificare nomi metodi/variabili per essere più parlanti
+2) Modificare nomi metodi/variabili per essere più parlanti , smettila di mettere Response di altre entità in servizi che non gli appartengono!!!!
 
-5) I metodi getStudentiClasse e getProfessoriClasse non devono stare sotto il controller della classe ma sotto i corrispettivi Controller
+Per esempio guarda ProfessoreServiceImpl che torna un ClasseResponse
 
-al momento abbiamo :  @GetMapping("/{id}/studenti") e @GetMapping("/{id}/professori") sotto ClasseController
+3) getClassiDelProfessore -> che cazzo è?
 
-mi aspetto : sotto ClasseController @Getmapping("/classe/{id}") e sotto ProfessoriController @GetMapping("/classe/{id}")
-
-Noi vogliamo delle liste di professori e studenti ma torniamo una ClasseEntity, la cosa non è logicamente lineare.
-
-Inoltre al momento se metto una classe non esistente va in errore.
-
-
-6) Implementare @Transactional su alcuni metodi ( da vedere assieme )
-
-7) StudenteResponseMapper ->     @Mapping(target = "classeId", expression = "java(entity.getClasse() != null ? entity.getClasse().getId() : null)")
-    Dobbiamo lavorare dando per scontato che uno studente ha SEMPRE una classe
-
-
-8) Normalizza i mapper dello studente :
- StudenteRequestMapper -> Prima cosa, non dovresti mettere funzioni nei mapper, seconda cosa, adesso la risposta ad una API legata a StudenteResponse è questa :
- StudenteResponseMapper -> Riga 15
- StudenteResponse -> la classeId...
- Occhio che ora quando chiamo la getAll e i professori sono valorizzati scoppia..
-[
-  {
-    "id": 1,
-    "nome": "Piergiorgio",
-    "cognome": "Giorgio",
-    "eta": 18,
-    "dataNascita": [
-      1997,
-      12,
-      24,
-      0,
-      0
-    ],
-    "classe": {
-      "id": 1,
-      "identificativo": "C",
-      "grado": "5",
-      "professori": []
-    },
-    "classeId": 1   -> PERCHè?
-  }
-]
-..Inoltre ho apportato delle modifiche a StudenteResponseMapper.. capiscile e propagale
-
-9) Ho modificato cosa tornano i controller in StudenteController, dai un occhio e omologa
-
-10) Direi di levare il campo eta' ... non ha senso.. abbiamo la data di nascita l'eta' ce la ricaviamo
+4) Implementare @Transactional su alcuni metodi ( da vedere assieme )
 
 
 
