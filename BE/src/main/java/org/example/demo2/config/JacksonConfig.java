@@ -4,11 +4,11 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 
@@ -24,7 +24,7 @@ per gestire in modo univoco le date senza dover mettere la annotation ovunque se
 public class JacksonConfig {
 
     private static final String DATE_FORMAT = "yyyy-MM-dd";
-    
+
     @Bean
     public ObjectMapper objectMapper() {
         ObjectMapper mapper = new ObjectMapper();
@@ -34,9 +34,9 @@ public class JacksonConfig {
         //Modulo per JAVA Date/Time
         JavaTimeModule module = new JavaTimeModule();
 
-        //Serializer per LOcalDate nel formato yyy-MM-dd
-        module.addSerializer(LocalDate.class, new LocalDateSerializer(DateTimeFormatter.ofPattern(DATE_FORMAT)));
-        
+        //Serializer per LocalDateTime nel formato yyy-MM-dd
+        module.addSerializer(LocalDateTime.class, new LocalDateTimeSerializer(DateTimeFormatter.ofPattern(DATE_FORMAT)));
+
         //Registra il modulo(usa questo modulo aggiuntivo per gestire nuovi tipi di dati o comportamenti personalizzati.)
         mapper.registerModule(module);
 

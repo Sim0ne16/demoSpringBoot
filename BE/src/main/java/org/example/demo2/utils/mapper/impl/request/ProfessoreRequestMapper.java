@@ -1,37 +1,32 @@
 package org.example.demo2.utils.mapper.impl.request;
 
-import java.util.List;
-
 import org.example.demo2.dao.entity.ProfessoreEntity;
 import org.example.demo2.dto.request.ProfessoreRequest;
+import org.example.demo2.dto.response.ProfessoreResponse;
 import org.example.demo2.utils.mapper.general.GeneralRestMapper;
+import org.mapstruct.IterableMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
+import org.mapstruct.Named;
 
+import java.util.List;
 
 
 @Mapper(componentModel = "spring")
 public interface ProfessoreRequestMapper extends GeneralRestMapper<ProfessoreEntity, ProfessoreRequest> {
 
-    @Mapping(ignore = true, target = "classi")
-    void updateEntityFromDto(ProfessoreRequest professoreRequest, @MappingTarget ProfessoreEntity professoreEntity);
-    
-    @Mapping(ignore = true, target = "classi")
-    @Override
-    ProfessoreEntity fromReToEntity(ProfessoreRequest re);
+    @Named("professoreSemplice")
+    ProfessoreResponse fromEntityToReSimple(ProfessoreEntity entity);
 
-    @Mapping(ignore = true, target = "classi")
-    @Override
-    List<ProfessoreEntity> fromReListToEntityList(List<ProfessoreRequest> re);
+    @Named("professoreSemplice")
+    @Mapping(target = "classi", ignore = true)
+    ProfessoreEntity fromReToEntitySimple(ProfessoreResponse response);
 
-    @Mapping(ignore = true, target = "specializzazione")
-    @Override
-    ProfessoreRequest fromEntityToRe(ProfessoreEntity entity);
+    @IterableMapping(qualifiedByName = "professoreSemplice")
+    List<ProfessoreResponse> fromEntityListToReListSimple(List<ProfessoreEntity> entityList);
 
-    @Mapping(ignore = true, target = "classi")
-    @Override
-    List<ProfessoreRequest> fromEntityListToReList(List<ProfessoreEntity> entityList);
+    @IterableMapping(qualifiedByName = "professoreSemplice")
+    List<ProfessoreEntity> fromReListToEntityListSimple(List<ProfessoreResponse> responseList);
 
 
 }

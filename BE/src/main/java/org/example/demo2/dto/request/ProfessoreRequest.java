@@ -15,7 +15,6 @@ public class ProfessoreRequest {
     private Long id;
     private String nome;
     private String cognome;
-    private int eta;
     private LocalDateTime dataNascita;
     private Specializzazione specializzazione;
 

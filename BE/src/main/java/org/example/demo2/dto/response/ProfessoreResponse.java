@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 import org.example.demo2.utils.enums.Specializzazione;
 
 import java.time.LocalDateTime;
-import java.util.Set;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -16,9 +16,8 @@ public class ProfessoreResponse {
     private Long id;
     private String nome;
     private String cognome;
-    private int eta;
     private LocalDateTime dataNascita;
     private Specializzazione specializzazione;
-    private Set<ClasseResponse> classi;
+    private List<ClasseResponse> classi;
 
 }

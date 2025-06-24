@@ -1,8 +1,6 @@
 package org.example.demo2.service.impl;
 
-import java.util.List;
-
-
+import lombok.RequiredArgsConstructor;
 import org.example.demo2.dao.entity.ClasseEntity;
 import org.example.demo2.dao.repository.ClasseRepository;
 import org.example.demo2.dto.request.ClasseRequest;
@@ -15,7 +13,7 @@ import org.example.demo2.utils.mapper.impl.response.ProfessoreResponseMapper;
 import org.example.demo2.utils.mapper.impl.response.StudenteResponseMapper;
 import org.springframework.stereotype.Service;
 
-import lombok.RequiredArgsConstructor;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -31,7 +29,7 @@ public class ClasseServiceImpl implements ClasseService {
     public ClasseResponse insert(ClasseRequest classeRequest) {
         ClasseEntity classeEntity = classeRequestMapper.fromReToEntity(classeRequest);
         classeRepository.save(classeEntity);
-        return classeResponseMapper.fromEntityToRe(classeEntity);
+        return classeResponseMapper.fromEntityToRe(classeEntity, studenteResponseMapper, professoreResponseMapper);
     }
 
     @Override
@@ -39,16 +37,24 @@ public class ClasseServiceImpl implements ClasseService {
         ClasseEntity classeEntity = classeRepository.findById(classeRequest.getId())
                 .orElseThrow(() -> new NotFoundException("Classe non esistente"));
 
-        classeRequestMapper.updateEntityFromDto(classeRequest, classeEntity);
+        //classeRequestMapper.updateEntityFromDto(classeRequest, classeEntity);
         classeRepository.save(classeEntity);
 
-        return classeResponseMapper.fromEntityToRe(classeEntity);
+        return classeResponseMapper.fromEntityToRe(classeEntity, studenteResponseMapper, professoreResponseMapper);
     }
 
     @Override
-    public List<ClasseResponse> getAll() {
+    public List<ClasseResponse> getAll(boolean includeStudenti, boolean includeProfessori) {
         List<ClasseEntity> classi = classeRepository.findAll();
-        return classeResponseMapper.fromEntityListToReList(classi);
+        List<ClasseResponse> response = classeResponseMapper.fromEntityListToReList(classi, studenteResponseMapper, professoreResponseMapper);
+
+        if(!includeStudenti)
+            response.forEach(c -> c.setStudenti(null));
+
+        if(!includeProfessori)
+            response.forEach(c -> c.setProfessori(null));
+
+        return response;
     }
 
     @Override
@@ -77,7 +83,7 @@ public class ClasseServiceImpl implements ClasseService {
         ClasseEntity classe = classeRepository.findByIdWithStudenti(classeId)
                 .orElseThrow(() -> new NotFoundException("Classe non trovata"));
 
-        ClasseResponse response = classeResponseMapper.fromEntityToRe(classe);
+        ClasseResponse response = classeResponseMapper.fromEntityToRe(classe, studenteResponseMapper, professoreResponseMapper);
         response.setStudenti(classe.getStudenti().stream()
                 .map(studenteResponseMapper::fromEntityToRe)
                 .toList());
@@ -90,7 +96,7 @@ public class ClasseServiceImpl implements ClasseService {
         ClasseEntity classe = classeRepository.findByIdWithProfessori(classeId)
                 .orElseThrow(() -> new NotFoundException("Classe non trovata"));
 
-        ClasseResponse response = classeResponseMapper.fromEntityToRe(classe);
+        ClasseResponse response = classeResponseMapper.fromEntityToRe(classe, studenteResponseMapper, professoreResponseMapper);
         if (classe.getProfessori() != null) {
             response.setProfessori(
                     classe.getProfessori().stream()
@@ -106,6 +112,7 @@ public class ClasseServiceImpl implements ClasseService {
     public ClasseResponse getById(Long id) throws NotFoundException {
         ClasseEntity classe = classeRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Classe non trovata"));
-        return classeResponseMapper.fromEntityToRe(classe);
+        return classeResponseMapper.fromEntityToRe(classe, studenteResponseMapper, professoreResponseMapper);
     }
+
 }

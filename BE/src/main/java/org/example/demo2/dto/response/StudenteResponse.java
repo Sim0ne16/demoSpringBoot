@@ -12,12 +12,10 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class StudenteResponse {
 
-    // Se vogliamo ignorare un campo usiamo @JsonBackReference 
-
+    // Se vogliamo ignorare un campo usiamo @JsonBackReference
     private Long id;
     private String nome;
     private String cognome;
-    private int eta;
     private LocalDateTime dataNascita;
     private ClasseResponse classe;
 

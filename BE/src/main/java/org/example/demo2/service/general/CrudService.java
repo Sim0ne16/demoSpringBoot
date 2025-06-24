@@ -9,8 +9,9 @@ import java.util.List;
 public interface CrudService<T> {
 
     T insert(T dto);
-    List<ClasseResponse> getAll();
+
     T update(T dto) throws NotFoundException;
+
     void delete(Long id) throws NotFoundException;
 
 }

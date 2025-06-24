@@ -6,7 +6,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-
 import java.util.List;
 
 
@@ -22,7 +21,7 @@ import java.util.List;
 // e' buona cosa specificare la tabella di riferimento lato DB cosi' da avere piu' controllo
 //@Table(name = "studenti")
 
-@Table(name="classi")
+@Table(name = "classi")
 public class ClasseEntity {
 
     @Id

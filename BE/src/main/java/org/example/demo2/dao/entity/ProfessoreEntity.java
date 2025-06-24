@@ -8,14 +8,14 @@ import lombok.NoArgsConstructor;
 import org.example.demo2.utils.enums.Specializzazione;
 
 import java.time.LocalDateTime;
-import java.util.Set;
+import java.util.List;
 
 @Entity
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Table(name="professori")
+@Table(name = "professori")
 public class ProfessoreEntity {
 
     @Id
@@ -28,9 +28,6 @@ public class ProfessoreEntity {
 
     @Column(nullable = false)
     private String cognome;
-
-    @Column(nullable = false)
-    private int eta;
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(nullable = false, name = "data_nascita")
@@ -45,5 +42,5 @@ public class ProfessoreEntity {
      */
 
     @ManyToMany(mappedBy = "professori", cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
-    private Set<ClasseEntity> classi;
+    private List<ClasseEntity> classi;
 }

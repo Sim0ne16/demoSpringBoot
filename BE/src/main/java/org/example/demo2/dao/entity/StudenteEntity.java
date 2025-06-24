@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Table(name="studenti")
+@Table(name = "studenti")
 public class StudenteEntity {
 
     /*
@@ -36,9 +36,6 @@ public class StudenteEntity {
 
     @Column(nullable = false)
     private String cognome;
-
-    @Column(nullable = false)
-    private int eta;
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(nullable = false, name = "data_nascita")

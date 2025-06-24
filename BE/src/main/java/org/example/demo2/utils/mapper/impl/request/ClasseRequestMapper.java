@@ -3,30 +3,30 @@ package org.example.demo2.utils.mapper.impl.request;
 
 import org.example.demo2.dao.entity.ClasseEntity;
 import org.example.demo2.dto.request.ClasseRequest;
-import org.example.demo2.dto.response.ClasseResponse;
 import org.example.demo2.utils.mapper.general.GeneralRestMapper;
+import org.mapstruct.IterableMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
+import org.mapstruct.Named;
+
+import java.util.List;
 
 @Mapper(componentModel = "spring")
-public interface ClasseRequestMapper extends GeneralRestMapper<ClasseEntity, ClasseResponse> {
+public interface ClasseRequestMapper extends GeneralRestMapper<ClasseEntity, ClasseRequest> {
 
-    @Mapping(ignore = true, target = "professori")
-    @Mapping(ignore = true, target = "studenti")
-    void updateEntityFromDto(ClasseRequest classeRequest, @MappingTarget ClasseEntity classeEntity);
+    @Named("classeSemplice")
+    ClasseRequest fromEntityToReSimple(ClasseEntity entity);
 
-    @Mapping(ignore = true, target = "professori")
-    @Mapping(ignore = true, target = "studenti")
-    ClasseEntity fromReToEntity(ClasseRequest classeRequest);
+    @Named("classeSemplice")
+    @Mapping(target = "professori", ignore = true)
+    @Mapping(target = "studenti", ignore = true)
+    ClasseEntity fromReToEntitySimple(ClasseRequest request);
 
-    @Override
-    @Mapping(ignore = true, target = "professori")
-    @Mapping(ignore = true, target = "studenti")
-    ClasseResponse fromEntityToRe(ClasseEntity request);
+    @IterableMapping(qualifiedByName = "classeSemplice")
+    List<ClasseRequest> fromEntityListToReListSimple(List<ClasseEntity> entityList);
 
-    @Mapping(ignore = true, target = "professori")
-    @Mapping(ignore = true, target = "studenti")
-    ClasseEntity fromReToEntity(Long id);
+    @IterableMapping(qualifiedByName = "classeSemplice")
+    List<ClasseEntity> fromReListToEntityListSimple(List<ClasseRequest> requestList);
+
 }
 

@@ -1,11 +1,11 @@
 package org.example.demo2.service.general;
 
-import java.util.List;
-
 import org.example.demo2.dao.entity.ClasseEntity;
 import org.example.demo2.dto.request.ClasseRequest;
 import org.example.demo2.dto.response.ClasseResponse;
 import org.example.demo2.utils.exception.NotFoundException;
+
+import java.util.List;
 
 public interface ClasseService extends CrudService<ClasseEntity> {
     ClasseResponse insert(ClasseRequest classeRequest);
@@ -18,7 +18,7 @@ public interface ClasseService extends CrudService<ClasseEntity> {
 
     ClasseResponse update1(ClasseRequest classeRequest) throws NotFoundException;
 
-    List<ClasseResponse> getAll();
+    List<ClasseResponse> getAll(boolean includeStudenti, boolean includeProfessori);
 
     void delete(Long id) throws NotFoundException;
 

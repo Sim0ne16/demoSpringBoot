@@ -1,7 +1,6 @@
 package org.example.demo2.service.impl;
 
 import lombok.RequiredArgsConstructor;
-
 import org.example.demo2.dao.entity.ClasseEntity;
 import org.example.demo2.dao.entity.StudenteEntity;
 import org.example.demo2.dao.repository.ClasseRepository;
@@ -44,13 +43,13 @@ public class StudenteServiceImpl implements StudenteService {
     }
 
     @Override
-    public StudenteResponse update1(StudenteRequest studenteRequest) throws NotFoundException {
+    public StudenteResponse update(StudenteRequest studenteRequest) throws NotFoundException {
         StudenteEntity studenteEntity = studenteRepository.findById(studenteRequest.getId())
                 .orElseThrow(() -> new NotFoundException("Studente non trovato con id " + studenteRequest.getId()));
 
         // updateEntityFromDto è un metodo del mapper che aggiorna solo i campi
         // necessari.
-        studenteRequestMapper.updateEntityFromDto(studenteRequest, studenteEntity);
+        //studenteRequestMapper.updateEntityFromDto(studenteRequest, studenteEntity);
         studenteRepository.save(studenteEntity);
 
         return studenteResponseMapper.fromEntityToRe(studenteEntity);
@@ -104,7 +103,7 @@ public class StudenteServiceImpl implements StudenteService {
         return studenteResponseMapper.fromEntityToRe(updated);
     }
 
-    
+
     @Override
     public List<StudenteResponse> getAllByClass(Long classeId) throws NotFoundException {
         if (!classeRepository.existsById(classeId)) {

@@ -6,15 +6,18 @@ import java.util.List;
 //e si lavora direttamente con il @Mappper
 
 //Re in questo caso sta sia per Response che Request
-public interface GeneralRestMapper<E,R> {
+public interface GeneralRestMapper<E, R> {
 
     //Se vogliamo verificare i file generati controllare il .target
 
     //Nei mapper va ignorato il campo della relazione altrimenti si va in loop infinito
 
     R fromEntityToRe(E entity);
+
     E fromReToEntity(R re);
+
     List<R> fromEntityListToReList(List<E> entityList);
+
     List<E> fromReListToEntityList(List<R> re);
 
 }

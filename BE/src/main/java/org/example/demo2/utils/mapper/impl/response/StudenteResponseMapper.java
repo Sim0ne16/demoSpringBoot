@@ -3,43 +3,46 @@ package org.example.demo2.utils.mapper.impl.response;
 import org.example.demo2.dao.entity.StudenteEntity;
 import org.example.demo2.dto.response.StudenteResponse;
 import org.example.demo2.utils.mapper.general.GeneralRestMapper;
-import org.mapstruct.IterableMapping;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.Named;
-
+import org.mapstruct.*;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring")
+@Mapper(
+        componentModel = "spring",
+        uses = ClasseResponseMapper.class,
+        unmappedTargetPolicy = ReportingPolicy.IGNORE
+)
 public interface StudenteResponseMapper extends GeneralRestMapper<StudenteEntity, StudenteResponse> {
 
-    @Override
-    @Named("completo")
-    @Mapping(ignore = true, target = "classe.studenti")
-    @Mapping(ignore = true, target = "classe.professori")
-    StudenteResponse fromEntityToRe(StudenteEntity entity);
+    // --------------------- MAPPING SEMPLICE --------------------- //
 
-    @Override
-    @Named("completo")
-    @Mapping(ignore = true, target = "classe.studenti")
-    StudenteEntity fromReToEntity(StudenteResponse re);
+    @Named("studenteSemplice")
+    @Mapping(target = "classe", ignore = true)
+    StudenteResponse fromEntityToReSimple(StudenteEntity entity);
 
-    @Override
-    @IterableMapping(qualifiedByName = "completo")
-    List<StudenteResponse> fromEntityListToReList(List<StudenteEntity> entityList);
+    @Named("studenteSemplice")
+    @Mapping(target = "classe", ignore = true)
+    StudenteEntity fromReToEntitySimple(StudenteResponse response);
 
-    @Override
-    @IterableMapping(qualifiedByName = "completo")
-    List<StudenteEntity> fromReListToEntityList(List<StudenteResponse> re);
-
-    @Named("sempliceStudenti")
-    @Mapping(ignore = true, target = "classe" )
-    StudenteResponse fromEntityToReSimple(StudenteEntity entityList);
-    
-    @Named("sempliceStudentiList")
-    @IterableMapping(qualifiedByName = "sempliceStudenti")
+    @IterableMapping(qualifiedByName = "studenteSemplice")
     List<StudenteResponse> fromEntityListToReListSimple(List<StudenteEntity> entityList);
 
+    @IterableMapping(qualifiedByName = "studenteSemplice")
+    List<StudenteEntity> fromReListToEntityListSimple(List<StudenteResponse> responseList);
 
-} 
+    // --------------------- MAPPING COMPLETO --------------------- //
+
+    @Named("studenteCompleto")
+    @Mapping(target = "classe", qualifiedByName = "classeSemplice")
+    StudenteResponse fromEntityToRe(StudenteEntity entity);
+
+    @Named("studenteCompleto")
+    @Mapping(target = "classe", qualifiedByName = "classeSemplice")
+    StudenteEntity fromReToEntity(StudenteResponse response);
+
+    @IterableMapping(qualifiedByName = "studenteCompleto")
+    List<StudenteResponse> fromEntityListToReList(List<StudenteEntity> entityList);
+
+    @IterableMapping(qualifiedByName = "studenteCompleto")
+    List<StudenteEntity> fromReListToEntityList(List<StudenteResponse> responseList);
+}

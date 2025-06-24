@@ -21,7 +21,7 @@ public class StudenteController {
 
     /*
      * Quando usare PathVariable e quando RequestParam :
-     * 
+     *
      * ID risorsa (es. id, uuid) @PathVariable
      * Filtri, query, pagine, sort @RequestParam
      * Risorse annidate @PathVariable
@@ -54,7 +54,7 @@ public class StudenteController {
     // esempio di sintassi di chiamata -> http://localhost:8080/studente/Mario/Rossi
     @GetMapping(path = "/{nome}/{cognome}")
     private ResponseEntity<StudenteResponse> getStudenteByNomeCognome(@PathVariable("nome") String name,
-            @PathVariable("cognome") String lastName) {
+                                                                      @PathVariable("cognome") String lastName) {
         try {
             StudenteResponse studenteResponse = studenteService.getByNameAndLastName(name, lastName);
             return ResponseEntity.ok(studenteResponse);
@@ -98,8 +98,8 @@ public class StudenteController {
     private ResponseEntity<StudenteResponse> creaStudente(@RequestBody StudenteRequest studenteRequest) {
         // StudenteValidator.validate(studenteRequest)
         if (studenteRequest.getId() != null) {
-        throw new IllegalArgumentException("Per creare un nuovo studente l'id deve essere null");
-}
+            throw new IllegalArgumentException("Per creare un nuovo studente l'id deve essere null");
+        }
         StudenteResponse studenteResponse = studenteService.insert(studenteRequest);
 
         /*
@@ -108,14 +108,14 @@ public class StudenteController {
          * La specifica HTTP dice che, dopo aver creato una risorsa (ad esempio con un
          * POST), il server dovrebbe restituire lo status 201 Created
          * e includere nel campo header Location l'URI della nuova risorsa.
-         * 
+         *
          * Comunicazione chiara al client:
          * Il client sa esattamente dove può trovare o accedere a quella risorsa creata.
          * Ad esempio, se crei un nuovo utente, l'URI potrebbe essere qualcosa come
          * /users/123.
          * Tornare quell’URI aiuta il client a fare subito operazioni future su
          * quell’utente (GET, PUT, DELETE).
-         * 
+         *
          * Best practice RESTful:
          * In un’API RESTful ben progettata, risorse e URI sono fondamentali per la
          * navigazione e manipolazione.
@@ -140,7 +140,7 @@ public class StudenteController {
     private ResponseEntity<StudenteResponse> aggiornaStudente(@RequestBody StudenteRequest studenteRequest) {
         try {
             // StudenteValidator.validate(studenteRequest)
-            StudenteResponse studenteResponse = studenteService.update1(studenteRequest);
+            StudenteResponse studenteResponse = studenteService.update(studenteRequest);
             return new ResponseEntity<>(studenteResponse, HttpStatus.OK);
         } catch (NotFoundException e) {
             e.printStackTrace();
@@ -163,7 +163,7 @@ public class StudenteController {
     // Assegna una classe a uno studente
     @PutMapping("/{studenteId}/classe/{classeId}")
     public ResponseEntity<StudenteResponse> assegnaClasseStudente(@PathVariable Long studenteId,
-            @PathVariable Long classeId) throws NotFoundException {
+                                                                  @PathVariable Long classeId) throws NotFoundException {
         StudenteResponse updated = studenteService.assegnaClasse(studenteId, classeId);
         return ResponseEntity.ok(updated);
     }
@@ -171,10 +171,8 @@ public class StudenteController {
     /**
      * GET /studenti/classe/{classeId}
      * → restituisce la lista di StudenteResponse per la classe richiesta
-     * 
-     * @throws NotFoundException
-     * 
-     *                           Metodo che era nel posto sbagliato
+     *
+     * @throws NotFoundException Metodo che era nel posto sbagliato
      */
 
     @GetMapping("/classe/{classeId}")

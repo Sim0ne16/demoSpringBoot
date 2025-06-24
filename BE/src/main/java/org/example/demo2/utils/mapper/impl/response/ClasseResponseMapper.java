@@ -1,82 +1,61 @@
 package org.example.demo2.utils.mapper.impl.response;
 
-import java.util.List;
-import java.util.Set;
-
 import org.example.demo2.dao.entity.ClasseEntity;
 import org.example.demo2.dto.response.ClasseResponse;
-import org.example.demo2.utils.mapper.general.GeneralRestMapper;
-import org.mapstruct.IterableMapping;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.Named;
+import org.mapstruct.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
-//Allora avevi chiesto mapper che ti mappino dati completi e mapper che ti mappino i dati base allora li ho differenziati 
-//Usato @Named anche se no obbligatoria ma consigliato se ho più metodi di mapping per lo stesso tipo 
-//E cosi MapStruct non si confonde e IterableMapping() mi prende il metodo giusto
-@Mapper(componentModel = "spring")
-// Questa cosa di aggiungere questa dipendenza per mappare rapporti più completi
-// non mi convice ma mi dirai tu
-public interface ClasseResponseMapper extends GeneralRestMapper<ClasseEntity, ClasseResponse> {
+@Mapper(
+        componentModel = "spring",
+        unmappedTargetPolicy = ReportingPolicy.IGNORE
+)
+public interface ClasseResponseMapper {
 
-    // Semplici
-    @Override
-    @Named("sempliceClasse")
-    @Mapping(ignore = true, target = "studenti") // evita loop potenziali
-    @Mapping(ignore = true, target = "professori")
-    ClasseResponse fromEntityToRe(ClasseEntity entity);
+    // --------------------- MAPPING SEMPLICE --------------------- //
 
-    @Override
-    @Named("sempliceClasse")
-    @Mapping(ignore = true, target = "studenti")
-    @Mapping(ignore = true, target = "professori")
-    ClasseEntity fromReToEntity(ClasseResponse re);
+    @Named("classeSemplice")
+    @Mapping(target = "professori", ignore = true)
+    @Mapping(target = "studenti", ignore = true)
+    ClasseResponse fromEntityToReSimple(ClasseEntity entity);
 
-    @Override
-    @IterableMapping(qualifiedByName = "sempliceClasse")
-    List<ClasseResponse> fromEntityListToReList(List<ClasseEntity> entityList);
+    @Named("classeSemplice")
+    @Mapping(target = "professori", ignore = true)
+    @Mapping(target = "studenti", ignore = true)
+    ClasseEntity fromReToEntitySimple(ClasseResponse response);
 
-    @Override
-    @IterableMapping(qualifiedByName = "sempliceClasse")
-    List<ClasseEntity> fromReListToEntityList(List<ClasseResponse> reList);
+    @IterableMapping(qualifiedByName = "classeSemplice")
+    List<ClasseResponse> fromEntityListToReListSimple(List<ClasseEntity> entityList);
 
-    // Completi
-    /*
-     * Mappa una singola ClasseEntity → ClasseResponse **includendo** studenti e
-     * professori
-     * (ma per i professori userà il metodo @Named("completo") di
-     * ProfessoreResponseMapper)
-     */
-    @Named("completo")
-    @Mapping(target = "studenti",source= "studenti", qualifiedByName = "sempliceStudenti")
-    @Mapping(source="professori",target = "professori", qualifiedByName = "completoList")
-    ClasseResponse fromEntityListToReCompleto(ClasseEntity entity);
+    @IterableMapping(qualifiedByName = "classeSemplice")
+    List<ClasseEntity> fromReListToEntityListSimple(List<ClasseResponse> responseList);
 
-    
-    // Mappa una lista di ClasseEntity → ClasseResponse usando il metodo sopra
+    // --------------------- MAPPING COMPLETO --------------------- //
 
-    List<ClasseResponse> fromEntityToReListCompleto(List<ClasseEntity> entityList);
+    //Se ci sono studenti/professori, mappali uno a uno nel formato semplice e mettili nel DTO. Se non ci sono, lascia la lista vuota."
+    @Named("classeCompleta")
+    @Mapping(target = "professori", expression = "java(entity.getProfessori() != null ? entity.getProfessori().stream().map(professoreResponseMapper::fromEntityToReSimple).collect(java.util.stream.Collectors.toList()) : new java.util.ArrayList<>())")
+    @Mapping(target = "studenti", expression = "java(entity.getStudenti() != null ? entity.getStudenti().stream().map(studenteResponseMapper::fromEntityToReSimple).collect(java.util.stream.Collectors.toList()) : new java.util.ArrayList<>())")
+    ClasseResponse fromEntityToRe(ClasseEntity entity, StudenteResponseMapper studenteResponseMapper, ProfessoreResponseMapper professoreResponseMapper);
 
-    @Named("sempliceClasse")
-    @IterableMapping(qualifiedByName = "sempliceClasse")
-    List<ClasseResponse> mapClasseSetToClasseResponseSet(Set<ClasseEntity> classi);
-
-    // Questo dice a MapStruct: "Se vuoi una lista/set di classi mappate in modo
-    // semplice, usa fromEntityToRe (quello annotato con @Named("semplice"))".
+    @Named("classeCompleta")
+    @Mapping(target = "professori", expression = "java(response.getProfessori() != null ? response.getProfessori().stream().map(professoreResponseMapper::fromReToEntitySimple).collect(java.util.stream.Collectors.toList()) : new java.util.ArrayList<>())")
+    @Mapping(target = "studenti", expression = "java(response.getStudenti() != null ? response.getStudenti().stream().map(studenteResponseMapper::fromReToEntitySimple).collect(java.util.stream.Collectors.toList()) : new java.util.ArrayList<>())")
+    ClasseEntity fromReToEntity(ClasseResponse response, StudenteResponseMapper studenteResponseMapper, ProfessoreResponseMapper professoreResponseMapper);
 
 
+    default List<ClasseResponse> fromEntityListToReList(List<ClasseEntity> entityList, StudenteResponseMapper studenteResponseMapper, ProfessoreResponseMapper professoreResponseMapper) {
+        List<ClasseResponse> responseList = new ArrayList<>();
+        entityList.forEach(el -> responseList.add(fromEntityToRe(el, studenteResponseMapper, professoreResponseMapper)));
+        return responseList;
+    }
 
-
-
-
-
-    // Mapping method for professori with the qualifier "completoList"
-    @Named("completoList")
-    List<org.example.demo2.dto.response.ProfessoreResponse> mapProfessoriToProfessoreResponseCompletoList(List<org.example.demo2.dao.entity.ProfessoreEntity> professori);
-
-    // Mapping method for studenti with the qualifier "sempliceStudenti"
-    @Named("sempliceStudenti")
-    List<org.example.demo2.dto.response.StudenteResponse> mapStudentiToStudentiResponse(List<org.example.demo2.dao.entity.StudenteEntity> studenti);
+    default List<ClasseEntity> fromReListToEntityList(List<ClasseResponse> responseList, StudenteResponseMapper studenteResponseMapper, ProfessoreResponseMapper professoreResponseMapper) {
+        List<ClasseEntity> entityList = new ArrayList<>();
+        responseList.forEach(el -> entityList.add(fromReToEntity(el, studenteResponseMapper, professoreResponseMapper)));
+        return entityList;
+    }
 
 }

@@ -25,10 +25,13 @@ public class ClasseController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-    // Ottieni tutte le classi
+
     @GetMapping
-    public ResponseEntity<List<ClasseResponse>> getAllClassi() {
-        return ResponseEntity.ok(classeService.getAll());
+    public ResponseEntity<List<ClasseResponse>> getAllClassi(
+            @RequestParam(defaultValue = "false") boolean includeStudenti,
+            @RequestParam(defaultValue = "false") boolean includeProfessori
+    ) {
+        return ResponseEntity.ok(classeService.getAll(includeStudenti, includeProfessori));
     }
 
     // Ottieni classe per ID
@@ -49,6 +52,4 @@ public class ClasseController {
         classeService.delete(id);
         return ResponseEntity.noContent().build();
     }
-
-    
 }

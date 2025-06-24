@@ -42,14 +42,11 @@ public class StudenteRequest {
     @NotBlank(message = "Il cognome non puo' essere vuoto")
     private String cognome;
 
-    private int eta;
-
     private LocalDateTime dataNascita;
 
-     @NotNull(message = "La classe è obbligatoria")
-    
-     private Long classeId;
+    @NotNull(message = "La classe è obbligatoria")
 
-    
+    private Long classeId;
+
 
 }
