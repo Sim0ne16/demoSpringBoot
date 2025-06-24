@@ -17,5 +17,7 @@ public interface StudenteService{
     void delete(Long id) throws NotFoundException;
     
     StudenteResponse assegnaClasse(Long studenteId, Long classeId) throws NotFoundException;
-
-}
+    
+    //Aggiunto per rimuovere i due metodi che erano nel posto sbagliato in ClassController.
+    List<StudenteResponse> getAllByClass(Long classeId) throws NotFoundException;
+} 

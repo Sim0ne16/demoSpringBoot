@@ -3,9 +3,9 @@ TODO LIST :
 
 
 
-1 ) Testare tutte le API
+1) Testare tutte le API
 
-2 ) La data deve essere in formato  YYYY-MM-DD
+2) La data deve essere in formato  YYYY-MM-DD
 
 3) Nei mapper creare dei metodi per tornare una response base e una completa ( esempio studente con tutte le informazioni inclusa la classe e senza )
 

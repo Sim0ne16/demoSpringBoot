@@ -21,6 +21,4 @@ public class StudenteResponse {
     private LocalDateTime dataNascita;
     private ClasseResponse classe;
 
-    private Long classeId;
-
 }

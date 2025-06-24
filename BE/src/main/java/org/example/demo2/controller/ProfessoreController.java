@@ -32,7 +32,7 @@ public class ProfessoreController {
         List<ProfessoreResponse> professoreResponse = professoreService.getAll();
         return new ResponseEntity<>(professoreResponse, HttpStatus.OK);
     }
-
+    //Prende un proffessore basandosi sull'ID
     @GetMapping(path = "/{id}")
     private ResponseEntity<ProfessoreResponse> getProfessoreById(@PathVariable Long id) {
         try {
@@ -45,7 +45,8 @@ public class ProfessoreController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
-
+    
+    //Crea Un Professore
     @PostMapping
     public ResponseEntity<ProfessoreResponse> creaProfessore(@RequestBody ProfessoreRequest request) {
         ProfessoreResponse response = professoreService.insert(request);
@@ -53,11 +54,10 @@ public class ProfessoreController {
     }
 
     // Assegna una classe a un professore
-    @PutMapping("/{professoreId}/classi/{classeId}")
+     @PutMapping("/{professoreId}/classi/{classeId}")
     public ResponseEntity<ProfessoreResponse> assegnaClasseAProfessore(@PathVariable Long professoreId,
                                                                        @PathVariable Long classeId) throws NotFoundException {
-        ProfessoreResponse updated = professoreService.assegnaClasse(professoreId, classeId);
-        return ResponseEntity.ok(updated);
+        return ResponseEntity.ok(professoreService.assegnaClasse(professoreId, classeId));
     }
 
     // Vedi classi assegnate al rpofessore
@@ -66,5 +66,19 @@ public class ProfessoreController {
         List<ClasseResponse> classi = professoreService.getClassiDelProfessore(id);
         return ResponseEntity.ok(classi);
 
+    }
+
+    /**
+     * GET /professori/classe/{classeId}
+     * → restituisce la lista di ProfessoreResponse per la classe richiesta
+     * 
+     * Metodo che era nel posto sbagliato
+     */
+    
+    @GetMapping("/classe/{classeId}")
+    public ResponseEntity<List<ProfessoreResponse>> getByClass(
+            @PathVariable Long classeId) throws NotFoundException {
+        List<ProfessoreResponse> list = professoreService.getAllByClasse(classeId);
+        return ResponseEntity.ok(list);
     }
 }

@@ -50,15 +50,5 @@ public class ClasseController {
         return ResponseEntity.noContent().build();
     }
 
-    // Ottieni la classe con lista studenti
-    @GetMapping("/{id}/studenti")
-    public ResponseEntity<ClasseResponse> getStudentiClasse(@PathVariable Long id) throws NotFoundException {
-        return ResponseEntity.ok(classeService.getStudentList(id));
-    }
-
-    // Ottieni la classe con lista professori
-    @GetMapping("/{id}/professori")
-    public ResponseEntity<ClasseResponse> getProfessoriClasse(@PathVariable Long id) throws NotFoundException {
-        return ResponseEntity.ok(classeService.getProfessori(id));
-    }
+    
 }

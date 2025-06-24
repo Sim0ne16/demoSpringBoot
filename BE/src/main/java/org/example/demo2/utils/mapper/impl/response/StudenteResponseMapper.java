@@ -8,6 +8,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 
+
 import java.util.List;
 
 @Mapper(componentModel = "spring")
@@ -15,8 +16,8 @@ public interface StudenteResponseMapper extends GeneralRestMapper<StudenteEntity
 
     @Override
     @Named("completo")
-    @Mapping(target = "classeId", expression = "java(entity.getClasse() != null ? entity.getClasse().getId() : null)") //Perchè?
     @Mapping(ignore = true, target = "classe.studenti")
+    @Mapping(ignore = true, target = "classe.professori")
     StudenteResponse fromEntityToRe(StudenteEntity entity);
 
     @Override
@@ -32,13 +33,13 @@ public interface StudenteResponseMapper extends GeneralRestMapper<StudenteEntity
     @IterableMapping(qualifiedByName = "completo")
     List<StudenteEntity> fromReListToEntityList(List<StudenteResponse> re);
 
-
-    @Named("semplice")
+    @Named("sempliceStudenti")
     @Mapping(ignore = true, target = "classe" )
     StudenteResponse fromEntityToReSimple(StudenteEntity entityList);
-
-    @IterableMapping(qualifiedByName = "semplice")
+    
+    @Named("sempliceStudentiList")
+    @IterableMapping(qualifiedByName = "sempliceStudenti")
     List<StudenteResponse> fromEntityListToReListSimple(List<StudenteEntity> entityList);
 
 
-}
+} 

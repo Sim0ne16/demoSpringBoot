@@ -37,9 +37,7 @@ public class StudenteServiceImpl implements StudenteService {
     @Override
     public StudenteResponse getById(Long id, boolean includeClasse) throws NotFoundException {
         StudenteEntity studenteEntity = studenteRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Studente non trovato"));
-
-
+                .orElseThrow(() -> new NotFoundException("Studente non trovato con id " + id));
         return includeClasse
                 ? studenteResponseMapper.fromEntityToRe(studenteEntity)
                 : studenteResponseMapper.fromEntityToReSimple(studenteEntity);
@@ -48,7 +46,7 @@ public class StudenteServiceImpl implements StudenteService {
     @Override
     public StudenteResponse update1(StudenteRequest studenteRequest) throws NotFoundException {
         StudenteEntity studenteEntity = studenteRepository.findById(studenteRequest.getId())
-                .orElseThrow(() -> new NotFoundException("Studente non esistente"));
+                .orElseThrow(() -> new NotFoundException("Studente non trovato con id " + studenteRequest.getId()));
 
         // updateEntityFromDto è un metodo del mapper che aggiorna solo i campi
         // necessari.
@@ -61,7 +59,7 @@ public class StudenteServiceImpl implements StudenteService {
     @Override
     public void delete(Long id) throws NotFoundException {
         if (!studenteRepository.existsById(id)) {
-            throw new NotFoundException("Studente non esistente");
+            throw new NotFoundException("Studente non trovato con id " + id);
         }
         studenteRepository.deleteById(id);
     }
@@ -104,5 +102,15 @@ public class StudenteServiceImpl implements StudenteService {
         StudenteEntity updated = studenteRepository.save(studente);
 
         return studenteResponseMapper.fromEntityToRe(updated);
+    }
+
+    
+    @Override
+    public List<StudenteResponse> getAllByClass(Long classeId) throws NotFoundException {
+        if (!classeRepository.existsById(classeId)) {
+            throw new NotFoundException("Classe non trovata con id " + classeId);
+        }
+        List<StudenteEntity> list = studenteRepository.findAllByClasseId(classeId);
+        return studenteResponseMapper.fromEntityListToReListSimple(list);
     }
 }

@@ -1,1 +1,6 @@
 SWAGGER -> http://localhost:8080/swagger-ui/index.html#
+
+
+Una cosa utile se vi dovesse servire che a me capita spesso e quando avvio il progetto mi dice che la porta 8080 è occupata
+Allora apro il CMD come amministratore ci butto questo   ->     netstat -aon | findstr :8080 
+Vedo cosa lo occupa e lo killo con   ->   taskkill /PID 12345 /F    -> dove i numeri sono l'occupante abusivo 

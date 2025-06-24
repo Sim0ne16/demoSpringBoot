@@ -31,11 +31,15 @@ public class ProfessoreServiceImpl implements ProfessoreService {
     private final ClasseResponseMapper classeResponseMapper;
 
     @Override
-    public ProfessoreResponse insert(ProfessoreRequest professoreRequest) {
-        ProfessoreEntity professoreEntity = professoreRequestMapper.fromReToEntity(professoreRequest);
-        professoreRepository.save(professoreEntity);
-        return professoreResponseMapper.fromEntityToRe(professoreEntity);
+public ProfessoreResponse insert(ProfessoreRequest professoreRequest) {
+    if (professoreRequest.getId() != null) {
+        throw new IllegalArgumentException("L'id deve essere null per creare un nuovo professore");
     }
+
+    ProfessoreEntity professoreEntity = professoreRequestMapper.fromReToEntity(professoreRequest);
+    professoreRepository.save(professoreEntity);
+    return professoreResponseMapper.fromEntityToRe(professoreEntity);
+}
 
     @Override
     public ProfessoreResponse getById(Long id) throws NotFoundException {
@@ -131,6 +135,15 @@ public ProfessoreResponse assegnaClasse(Long professoreId, Long classeId) throws
 
     return professoreResponseMapper.fromEntityToRe(updated);
 }
+
+    @Override
+    public List<ProfessoreResponse> getAllByClasse(Long classeId) throws NotFoundException {
+        if (!classeRepository.existsById(classeId)) {
+            throw new NotFoundException("Classe non trovata con id " + classeId);
+        }
+        List<ProfessoreEntity> list = professoreRepository.findAllByClassi_Id(classeId);
+        return professoreResponseMapper.fromEntityListToReList(list);
+    }
     }
 
 
