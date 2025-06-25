@@ -20,5 +20,6 @@ public interface ClasseService {
     List<ClasseResponse> getAll(boolean includeStudenti, boolean includeProfessori);
 
     void delete(Long id) throws NotFoundException;
-
+    
+    List<ClasseResponse> getClasseAssegnataProfessore(Long professoreId) throws NotFoundException;
 }

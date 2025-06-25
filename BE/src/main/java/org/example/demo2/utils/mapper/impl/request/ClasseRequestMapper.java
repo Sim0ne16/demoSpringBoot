@@ -7,11 +7,13 @@ import org.example.demo2.utils.mapper.general.GeneralRestMapper;
 import org.mapstruct.IterableMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 import org.mapstruct.Named;
+import org.mapstruct.ReportingPolicy;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring",unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface ClasseRequestMapper extends GeneralRestMapper<ClasseEntity, ClasseRequest> {
 
     @Named("classeSemplice")
@@ -27,6 +29,10 @@ public interface ClasseRequestMapper extends GeneralRestMapper<ClasseEntity, Cla
 
     @IterableMapping(qualifiedByName = "classeSemplice")
     List<ClasseEntity> fromReListToEntityListSimple(List<ClasseRequest> requestList);
+    
+    @Mapping(target = "studenti", ignore = true)
+    @Mapping(target = "professori", ignore = true)
+    void updateEntityFromDto(ClasseRequest request, @MappingTarget ClasseEntity entity);
 
 }
 

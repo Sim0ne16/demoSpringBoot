@@ -10,9 +10,7 @@ import org.example.demo2.dto.response.ProfessoreResponse;
 import org.example.demo2.service.general.ProfessoreService;
 import org.example.demo2.utils.exception.NotFoundException;
 import org.example.demo2.utils.mapper.impl.request.ProfessoreRequestMapper;
-import org.example.demo2.utils.mapper.impl.response.ClasseResponseMapper;
 import org.example.demo2.utils.mapper.impl.response.ProfessoreResponseMapper;
-import org.example.demo2.utils.mapper.impl.response.StudenteResponseMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,13 +20,10 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ProfessoreServiceImpl implements ProfessoreService {
 
-
     private final ProfessoreRepository professoreRepository;
     private final ProfessoreRequestMapper professoreRequestMapper;
     private final ProfessoreResponseMapper professoreResponseMapper;
-    private final StudenteResponseMapper studenteResponseMapper;
     private final ClasseRepository classeRepository;
-    private final ClasseResponseMapper classeResponseMapper;
 
     @Override
     public ProfessoreResponse insert(ProfessoreRequest professoreRequest) {
@@ -65,8 +60,10 @@ public class ProfessoreServiceImpl implements ProfessoreService {
         ProfessoreEntity professoreEntity = professoreRepository.findById(professoreRequest.getId())
                 .orElseThrow(() -> new NotFoundException("Professore non esistente"));
 
-        // updateEntityFromDto è un metodo del mapper che aggiorna solo i campi necessari.
-        //professoreRequestMapper.updateEntityFromDto(professoreRequest, professoreEntity);
+        // updateEntityFromDto è un metodo del mapper che aggiorna solo i campi
+        // necessari.
+        // Implementato updateEntityFromDto!
+        professoreRequestMapper.updateEntityFromDto(professoreRequest, professoreEntity);
         professoreRepository.save(professoreEntity);
 
         return professoreResponseMapper.fromEntityToRe(professoreEntity);
@@ -77,7 +74,8 @@ public class ProfessoreServiceImpl implements ProfessoreService {
         if (!professoreRepository.existsById(professoreRequest.getId())) {
             throw new NotFoundException("Professore non esistente");
         }
-        ProfessoreEntity entityUpdated = professoreRepository.save(professoreRequestMapper.fromReToEntity(professoreRequest));
+        ProfessoreEntity entityUpdated = professoreRepository
+                .save(professoreRequestMapper.fromReToEntity(professoreRequest));
         return professoreResponseMapper.fromEntityToRe(entityUpdated);
     }
 
@@ -88,7 +86,6 @@ public class ProfessoreServiceImpl implements ProfessoreService {
                 ? professoreResponseMapper.fromEntityListToReList(professoriEntity)
                 : professoreResponseMapper.fromEntityListToReListSimple(professoriEntity);
     }
-
 
     @Override
     public ProfessoreResponse getByNameAndLastName(String nome, String cognome) throws NotFoundException {
@@ -101,45 +98,75 @@ public class ProfessoreServiceImpl implements ProfessoreService {
         return professoreResponseMapper.fromEntityToRe(professoreEntity.get());
     }
 
-
+    /*
+     * Modificato per evitare problemi nel caso volessimo eliminare un professore
+     * che e asseganto a una classe
+     * Chiedo se e la cosa giusta da fare perche mi sembrerebbe giusto anche non
+     * lasciarlo fare per evitare
+     * di cancellare professori che essendo già assegnati a una classe non
+     * dovrebbero essere rimossi.
+     * Oppure lasciarli entrambi e lasciare la scelta per evenienza
+     */
     @Override
     public void delete(Long id) throws NotFoundException {
-        if (!professoreRepository.existsById(id)) {
-            throw new NotFoundException("Professore non esistente");
+        ProfessoreEntity professore = professoreRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Professore non esistente"));
+
+        // Rimuovi la relazione ManyToMany da tutte le classi
+        for (ClasseEntity classe : professore.getClassi()) {
+            classe.getProfessori().remove(professore);
         }
-        professoreRepository.deleteById(id);
+
+        professore.getClassi().clear(); // opzionale
+
+        professoreRepository.delete(professore); 
     }
-
-    /* Torni un oggetto Classe nel servizio del professore......
-    @Override
-    public List<ClasseResponse> getClassiDelProfessore(Long professoreId) throws NotFoundException {
-        ProfessoreEntity professore = professoreRepository.findById(professoreId)
-                .orElseThrow(() -> new NotFoundException("Professore non trovato"));
-
-        // Converte le classi associate in ClasseResponse
-        return classeResponseMapper.fromEntityListToReList(professore.getClassi().stream().toList(), studenteResponseMapper,);
-    }
-
+    // Nel dubbio lascio la vecchia versione standard qua
+    /*
+     * @Override
+     * public void delete(Long id) throws NotFoundException {
+     * if (!professoreRepository.existsById(id)) {
+     * throw new NotFoundException("Professore non esistente");
+     * }
+     * professoreRepository.deleteById(id);
+     * }
      */
 
-
+    // Modificato qeusto metodo che mi salvata solo a lato passivo e non
+    // proprietario ecco spiegato il [] come risposta
     @Override
     public ProfessoreResponse assegnaClasse(Long professoreId, Long classeId) throws NotFoundException {
-        // Recupera il professore
         ProfessoreEntity professore = professoreRepository.findById(professoreId)
                 .orElseThrow(() -> new NotFoundException("Professore non trovato"));
 
-        // Recupera la classe
         ClasseEntity classe = classeRepository.findById(classeId)
                 .orElseThrow(() -> new NotFoundException("Classe non trovata"));
 
-        // Aggiunge la classe al set, se non già presente
+        // Aggiorna entrambi i lati
         professore.getClassi().add(classe);
+        classe.getProfessori().add(professore); // questo è il lato proprietario
 
-        // Salva
-        ProfessoreEntity updated = professoreRepository.save(professore);
+        // Salva SOLO il lato proprietario
+        classeRepository.save(classe);
 
-        return professoreResponseMapper.fromEntityToRe(updated);
+        return professoreResponseMapper.fromEntityToRe(professore);
+    }
+
+    // Aggiunto un metodo per rimuovere un professore da una classe
+    public ProfessoreResponse rimuoviClasse(Long professoreId, Long classeId) throws NotFoundException {
+        ProfessoreEntity professore = professoreRepository.findById(professoreId)
+                .orElseThrow(() -> new NotFoundException("Professore non trovato"));
+        ClasseEntity classe = classeRepository.findById(classeId)
+                .orElseThrow(() -> new NotFoundException("Classe non trovata"));
+
+        // Rimuovi entrambi i lati della relazione
+        professore.getClassi().remove(classe);
+        classe.getProfessori().remove(professore);
+
+        // Salva SOLO il lato proprietario
+        classeRepository.save(classe);
+
+        return professoreResponseMapper.fromEntityToRe(professore);
     }
 
     @Override
@@ -152,6 +179,3 @@ public class ProfessoreServiceImpl implements ProfessoreService {
     }
 
 }
-
-
-

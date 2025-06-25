@@ -10,9 +10,30 @@ Per modus operandi ti consiglio di partire da un'entità, completare i test su q
 
 Per esempio guarda ProfessoreServiceImpl che torna un ClasseResponse
 
-3) getClassiDelProfessore -> che cazzo è?
+Era per tornare tutti i proferssori in base all ID della classe ->(Modificato e spostato nella posizione giusta) 3) getClassiDelProfessore -> che cazzo è?
 
 4) Implementare @Transactional su alcuni metodi ( da vedere assieme )
+
+**********Provate tutte le chiamate per tutte le Entità *********
+
+**Studente**:Comportamenti pertinenti in tutti i casi tranne una piccolezza:
+
+Nella POST dello Studente mi chiede sempre la classId poiche nella StudenteEntity ce lo richiede come forma di relazione OneToMany ma non lo associa direttamente alla classe non so se sono fuso io ma e una cosa da aggiustare secondo me.(So che ho la chiamata che mi fa associare direttamente los tudente alla classe che funziona di conseguenza non ho bisogno di dichiarare la classeID quando creo un nuovo studente)
+
+**Professore**:Comportamenti pertinenti in tutti i casi
+
+**Classi**:Comportamenti pertinenti in tutti i casi
+
+Non ho modificato ancora nulla con le date di conseguenza nelle PUT bisogna sempre copiare e incollare il pezzo delle ore dei minuti etc...
+
+Quando si crea uno Studente e un Professore bisogna omettere l'id mentre per la classe no 
+
+Buona idea quella del togliere l'età
+
+(Per Simone e non per il dirigente)Nel complesso niente mi errori e il comportamento sembra giusto tranne per quella cosa dei studenti e delle date dai una controllatina veloce per confermare o ribaltare la decisione. 
+
+
+
 
 
 

@@ -24,12 +24,13 @@ public interface ProfessoreService {
 
     void delete(Long id) throws NotFoundException;
 
-    // Come ho commentato di la... Perchè torni una classe response nel servizio del professore??????
-    //List<ClasseResponse> getClassiDelProfessore(Long professoreId) throws NotFoundException;
-
     ProfessoreResponse assegnaClasse(Long professoreId, Long classeId) throws NotFoundException;
 
-    //Aggiunto per rimuovere i due metodi che erano nel posto sbagliato in ClassController.
+    ProfessoreResponse rimuoviClasse(Long professoreId, Long classeId) throws NotFoundException;
+
+
+    // Aggiunto per rimuovere i due metodi che erano nel posto sbagliato in
+    // ClassController.
     List<ProfessoreResponse> getAllByClasse(Long classeId) throws NotFoundException;
 
 }

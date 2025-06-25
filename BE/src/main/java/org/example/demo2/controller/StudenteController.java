@@ -54,7 +54,7 @@ public class StudenteController {
     // esempio di sintassi di chiamata -> http://localhost:8080/studente/Mario/Rossi
     @GetMapping(path = "/{nome}/{cognome}")
     private ResponseEntity<StudenteResponse> getStudenteByNomeCognome(@PathVariable("nome") String name,
-                                                                      @PathVariable("cognome") String lastName) {
+            @PathVariable("cognome") String lastName) {
         try {
             StudenteResponse studenteResponse = studenteService.getByNameAndLastName(name, lastName);
             return ResponseEntity.ok(studenteResponse);
@@ -83,6 +83,14 @@ public class StudenteController {
             e.printStackTrace();
             return ResponseEntity.notFound().build();
         }
+    }
+
+    // In base all'ID della classe restituisce gli studenti che le appartengono
+    @GetMapping("/classe/{classeId}")
+    public ResponseEntity<List<StudenteResponse>> getStudentiByClasse(
+            @PathVariable Long classeId) throws NotFoundException {
+        List<StudenteResponse> list = studenteService.getAllByClass(classeId);
+        return ResponseEntity.ok(list);
     }
 
     /*
@@ -148,6 +156,14 @@ public class StudenteController {
         }
     }
 
+    // Assegna una classe a uno studente
+    @PutMapping("/{studenteId}/classe/{classeId}")
+    public ResponseEntity<StudenteResponse> assegnaClasseStudente(@PathVariable Long studenteId,
+            @PathVariable Long classeId) throws NotFoundException {
+        StudenteResponse updated = studenteService.assegnaClasse(studenteId, classeId);
+        return ResponseEntity.ok(updated);
+    }
+
     // Con il verbo Delete indichiamo l'eliminazione di un'entità nel database
     @DeleteMapping(path = "/{id}")
     private ResponseEntity<Void> eliminaStudente(@PathVariable Long id) {
@@ -158,28 +174,6 @@ public class StudenteController {
             e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-    }
-
-    // Assegna una classe a uno studente
-    @PutMapping("/{studenteId}/classe/{classeId}")
-    public ResponseEntity<StudenteResponse> assegnaClasseStudente(@PathVariable Long studenteId,
-                                                                  @PathVariable Long classeId) throws NotFoundException {
-        StudenteResponse updated = studenteService.assegnaClasse(studenteId, classeId);
-        return ResponseEntity.ok(updated);
-    }
-
-    /**
-     * GET /studenti/classe/{classeId}
-     * → restituisce la lista di StudenteResponse per la classe richiesta
-     *
-     * @throws NotFoundException Metodo che era nel posto sbagliato
-     */
-
-    @GetMapping("/classe/{classeId}")
-    public ResponseEntity<List<StudenteResponse>> getStudentiByClasse(
-            @PathVariable Long classeId) throws NotFoundException {
-        List<StudenteResponse> list = studenteService.getAllByClass(classeId);
-        return ResponseEntity.ok(list);
     }
 
 }

@@ -17,12 +17,15 @@ import java.util.List;
 public class ProfessoreController {
     private final ProfessoreService professoreService;
 
+    // Restituisci tutti i professori
     @GetMapping
-    private ResponseEntity<List<ProfessoreResponse>> getAllProfessori(@RequestParam(defaultValue = "false") boolean includeClassi) {
+    private ResponseEntity<List<ProfessoreResponse>> getAllProfessori(
+            @RequestParam(defaultValue = "false") boolean includeClassi) {
         List<ProfessoreResponse> list = professoreService.getAll(includeClassi);
         return ResponseEntity.ok(list);
     }
 
+    // Restituisce i professori in base all'ID
     @GetMapping(path = "/{id}")
     private ResponseEntity<ProfessoreResponse> getProfessoreById(@PathVariable Long id) {
         try {
@@ -36,37 +39,7 @@ public class ProfessoreController {
         }
     }
 
-    //Crea Un Professore
-    @PostMapping
-    public ResponseEntity<ProfessoreResponse> creaProfessore(@RequestBody ProfessoreRequest request) {
-        ProfessoreResponse response = professoreService.insert(request);
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
-    }
-
-    // Assegna una classe a un professore
-    @PutMapping("/{professoreId}/classi/{classeId}")
-    public ResponseEntity<ProfessoreResponse> assegnaClasseAProfessore(@PathVariable Long professoreId,
-                                                                       @PathVariable Long classeId) throws NotFoundException {
-        return ResponseEntity.ok(professoreService.assegnaClasse(professoreId, classeId));
-    }
-
-    // Vedi classi assegnate al rpofessore, VEDI I COMMENTI NEL SERVICE
-    /*
-    @GetMapping("/{id}/classi")
-    public ResponseEntity<List<ClasseResponse>> getClassiDelProfessore(@PathVariable Long id) throws NotFoundException {
-        List<ClasseResponse> classi = professoreService.getClassiDelProfessore(id);
-        return ResponseEntity.ok(classi);
-
-    }
-     */
-
-    /**
-     * GET /professori/classe/{classeId}
-     * → restituisce la lista di ProfessoreResponse per la classe richiesta
-     * <p>
-     * Metodo che era nel posto sbagliato
-     */
-
+    // In base all'ID della classe restituisce i professori che le appartengono
     @GetMapping("/classe/{classeId}")
     public ResponseEntity<List<ProfessoreResponse>> getByClass(
             @PathVariable Long classeId) throws NotFoundException {
@@ -74,4 +47,42 @@ public class ProfessoreController {
         return ResponseEntity.ok(list);
     }
 
+    // Crea Un Professore
+    @PostMapping
+    public ResponseEntity<ProfessoreResponse> creaProfessore(@RequestBody ProfessoreRequest request) {
+        ProfessoreResponse response = professoreService.insert(request);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
+
+    // Assegna una classe a un professore
+    @PutMapping("/professori/{professoreId}/classi/aggiungi/{classeId}")
+    public ResponseEntity<ProfessoreResponse> assegnaClasseAProfessore(@PathVariable Long professoreId,
+            @PathVariable Long classeId) throws NotFoundException {
+        return ResponseEntity.ok(professoreService.assegnaClasse(professoreId, classeId));
+    }
+
+    // Modifica un professore già esistente
+    @PutMapping
+    public ResponseEntity<ProfessoreResponse> aggiornaProfessore(@RequestBody ProfessoreRequest request)
+            throws NotFoundException {
+        ProfessoreResponse response = professoreService.update1(request);
+        return ResponseEntity.ok(response);
+    }
+
+    // Elimina un professore togliendolo dalle classi a cui apparteneva prima
+    @DeleteMapping("/professori/{professoreId}/classi/rimuovi/{classeId}")
+    public ResponseEntity<ProfessoreResponse> rimuoviClasseDaProfessore(
+            @PathVariable Long professoreId,
+            @PathVariable Long classeId) throws NotFoundException {
+        return ResponseEntity.ok(professoreService.rimuoviClasse(professoreId, classeId));
+    }
+    /*
+    //Delete semplice -> Guarda in ProfessoreServiceImpl per info a riguardo.  
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteProfessore(@PathVariable Long id) throws NotFoundException {
+        professoreService.delete(id);
+        return ResponseEntity.noContent().build(); // 204 No Content
+    }
+    */
+    
 }

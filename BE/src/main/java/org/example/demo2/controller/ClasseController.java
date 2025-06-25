@@ -1,6 +1,7 @@
 package org.example.demo2.controller;
 
 import lombok.RequiredArgsConstructor;
+
 import org.example.demo2.dto.request.ClasseRequest;
 import org.example.demo2.dto.response.ClasseResponse;
 import org.example.demo2.service.general.ClasseService;
@@ -18,26 +19,37 @@ public class ClasseController {
 
     private final ClasseService classeService;
 
+    // Restituisce tutte le classi
+    @GetMapping
+    public ResponseEntity<List<ClasseResponse>> getAllClassi(
+            @RequestParam(defaultValue = "false") boolean includeStudenti,
+            @RequestParam(defaultValue = "false") boolean includeProfessori) {
+        return ResponseEntity.ok(classeService.getAll(includeStudenti, includeProfessori));
+    }
+
+    // Restituisce classe per ID
+    @GetMapping("/{id}")
+    public ResponseEntity<ClasseResponse> getClasseById(@PathVariable Long id) throws NotFoundException {
+        return ResponseEntity.ok(classeService.getById(id));
+    }
+
+    // Penso che il metodo che avevo nel professore per ricevere tutte le classi che
+    // erano attribuite a un professore abbia senso
+    // Non aveva senso che fosse nel controller del professore
+    // Di conseguenza ho scelto di tenerlo ma di spostarlo qua
+    // Metodo per ottenere tutte le classi assegnate al professore x.
+    @GetMapping("/assegnate-professore/{professoreId}")
+    public ResponseEntity<List<ClasseResponse>> getClasseAssegnataProfessore(@PathVariable Long professoreId)
+            throws NotFoundException {
+        List<ClasseResponse> classi = classeService.getClasseAssegnataProfessore(professoreId);
+        return ResponseEntity.ok(classi);
+    }
+
     // Crea nuova classe
     @PostMapping
     public ResponseEntity<ClasseResponse> inserisciClasse(@RequestBody ClasseRequest request) {
         ClasseResponse response = classeService.insert(request);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
-    }
-
-
-    @GetMapping
-    public ResponseEntity<List<ClasseResponse>> getAllClassi(
-            @RequestParam(defaultValue = "false") boolean includeStudenti,
-            @RequestParam(defaultValue = "false") boolean includeProfessori
-    ) {
-        return ResponseEntity.ok(classeService.getAll(includeStudenti, includeProfessori));
-    }
-
-    // Ottieni classe per ID
-    @GetMapping("/{id}")
-    public ResponseEntity<ClasseResponse> getClasseById(@PathVariable Long id) throws NotFoundException {
-        return ResponseEntity.ok(classeService.getById(id));
     }
 
     // Aggiorna una classe
@@ -52,4 +64,5 @@ public class ClasseController {
         classeService.delete(id);
         return ResponseEntity.noContent().build();
     }
+
 }

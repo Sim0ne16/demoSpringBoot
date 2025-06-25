@@ -49,7 +49,8 @@ public class StudenteServiceImpl implements StudenteService {
 
         // updateEntityFromDto è un metodo del mapper che aggiorna solo i campi
         // necessari.
-        //studenteRequestMapper.updateEntityFromDto(studenteRequest, studenteEntity);
+        //Aggiunto nella StudenteRespondeMapper 
+        studenteRequestMapper.updateEntityFromDto(studenteRequest, studenteEntity);
         studenteRepository.save(studenteEntity);
 
         return studenteResponseMapper.fromEntityToRe(studenteEntity);
