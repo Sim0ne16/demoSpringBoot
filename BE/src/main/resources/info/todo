@@ -1,39 +1,39 @@
 
 TODO LIST :
 
+1) Modifica :  @DeleteMapping("/professori/{professoreId}/classi/rimuovi/{classeId}") , mi aspetto questo comportamento :
+Se elimino un professore a cascata verrà eliminato automaticamente dalle classi collegate, non devi farlo a mano guarda il Cascade.
+Non è una buona cosa che per eliminare un professore devo passare la classe a cui appartiene, quella deve essere una conseguenza data dalle relazioni.
+Deve funzionare come elimina studente, se elimino uno studente deve essere automaticamente rimosso anche dalle classi a cui appartiene che sia assegnato o meno.
 
-1) Far funzionare tutte le POST,PUT,DELETE poi passare alle altre... PRENDI COME ESEMPIO STUDENTE CONTROLLER SU ALCUNI PUNTI DI VISTA
+2) Dai una pulita al codice, le nomenclature devono essere correte, commenti brevi ed efficaci del comportamento di un metodo non di cosa hai fatto
+idem quando fai un commit troppo lungo non va bene
+Esempio : getClasseAssegnataProfessore e poi torni una lista quindi dovrebbe essere getClassiProfessore... è importante che ti abitui a fare questa cosa, VARIABILI E METODI PARLANTI
 
-Per modus operandi ti consiglio di partire da un'entità, completare i test su quella e poi passare alla successiva.
+3) Fixa le date.... e implementa un metodo nei professori che dato un range di date mi torni i corrispettivi professore,
+Esempio : voglio tutti i professori nati tra il 27 Dicembre 2001 e il 16 Gennaio 2005
 
-2) Modificare nomi metodi/variabili per essere più parlanti , smettila di mettere Response di altre entità in servizi che non gli appartengono!!!!
+4) Implementa una API che data una specializzazione mi ritorna tutti i professori che la hanno
 
-Per esempio guarda ProfessoreServiceImpl che torna un ClasseResponse
+5) Fixa la post dello studente e del professore in modo che rispetti questa logica :  la classeId può essere o non essere inclusa.. così ha senso che abbiamo il assegnaClasse
 
-Era per tornare tutti i proferssori in base all ID della classe ->(Modificato e spostato nella posizione giusta) 3) getClassiDelProfessore -> che cazzo è?
+6) Fixa la post della classe, non bisogna mai dover specificare l'id
 
-4) Implementare @Transactional su alcuni metodi ( da vedere assieme )
+7) Una volta fatto questo e testato che OGNI API funzioni, passa alla validazione degli oggetti che ti vengono passati nelle API hai 2 strade :
+    6.1 : Usi validator custom
+    6.2 : Usi Jakarta con @Valid
 
-**********Provate tutte le chiamate per tutte le Entità *********
+Entrambe sono soluzioni utilizzate, a te la scelta.
 
-**Studente**:Comportamenti pertinenti in tutti i casi tranne una piccolezza:
+8) Implementa error handling, l'applicativo non si deve spaccare facilmente
 
-Nella POST dello Studente mi chiede sempre la classId poiche nella StudenteEntity ce lo richiede come forma di relazione OneToMany ma non lo associa direttamente alla classe non so se sono fuso io ma e una cosa da aggiustare secondo me.(So che ho la chiamata che mi fa associare direttamente los tudente alla classe che funziona di conseguenza non ho bisogno di dichiarare la classeID quando creo un nuovo studente)
-
-**Professore**:Comportamenti pertinenti in tutti i casi
-
-**Classi**:Comportamenti pertinenti in tutti i casi
-
-Non ho modificato ancora nulla con le date di conseguenza nelle PUT bisogna sempre copiare e incollare il pezzo delle ore dei minuti etc...
-
-Quando si crea uno Studente e un Professore bisogna omettere l'id mentre per la classe no 
-
-Buona idea quella del togliere l'età
-
-(Per Simone e non per il dirigente)Nel complesso niente mi errori e il comportamento sembra giusto tranne per quella cosa dei studenti e delle date dai una controllatina veloce per confermare o ribaltare la decisione. 
+9) Crea dei test con JUnit e Mockito, testa la correttezza delle API, poi ne parliamo
 
 
+Per il resto hai fatto un lavoro discreto, puoi fare ancora di meglio, non testo le API che poi me le fai vedere te quindi ti do il beneficio del dubbio
 
+
+P.S. : Prego per i mapper.
 
 
 

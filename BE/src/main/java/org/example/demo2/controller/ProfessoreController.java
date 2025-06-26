@@ -69,7 +69,7 @@ public class ProfessoreController {
         return ResponseEntity.ok(response);
     }
 
-    // Elimina un professore togliendolo dalle classi a cui apparteneva prima
+    //  No
     @DeleteMapping("/professori/{professoreId}/classi/rimuovi/{classeId}")
     public ResponseEntity<ProfessoreResponse> rimuoviClasseDaProfessore(
             @PathVariable Long professoreId,
