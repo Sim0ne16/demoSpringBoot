@@ -15,7 +15,7 @@ public interface ClasseService {
 
     ClasseResponse getProfessori(Long classeId) throws NotFoundException;
 
-    ClasseResponse update1(ClasseRequest classeRequest) throws NotFoundException;
+    public ClasseResponse update(Long id, ClasseRequest classeRequest) throws NotFoundException;
 
     List<ClasseResponse> getAll(boolean includeStudenti, boolean includeProfessori);
 

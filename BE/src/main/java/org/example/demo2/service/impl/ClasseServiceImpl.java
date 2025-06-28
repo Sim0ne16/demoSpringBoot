@@ -34,15 +34,21 @@ public class ClasseServiceImpl implements ClasseService {
         return classeResponseMapper.fromEntityToRe(classeEntity, studenteResponseMapper, professoreResponseMapper);
     }
 
-    public ClasseResponse update1(ClasseRequest classeRequest) throws NotFoundException {
-        ClasseEntity classeEntity = classeRepository.findById(classeRequest.getId())
+    // Modificato per l'id
+    /*
+     * Quando fai UPDATE, l’id NON deve stare nel body (ClasseRequest), ma deve
+     * arrivare nell’URL come @PathVariable.
+     * È una best practice REST.
+     */
+    public ClasseResponse update(Long id, ClasseRequest classeRequest) throws NotFoundException {
+        ClasseEntity classeEntity = classeRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Classe non esistente"));
-        
-        //Implementato updateEntityFromDto!        
+
         classeRequestMapper.updateEntityFromDto(classeRequest, classeEntity);
         classeRepository.save(classeEntity);
 
         return classeResponseMapper.fromEntityToRe(classeEntity, studenteResponseMapper, professoreResponseMapper);
+
     }
 
     public List<ClasseResponse> getAll(boolean includeStudenti, boolean includeProfessori) {
@@ -112,15 +118,22 @@ public class ClasseServiceImpl implements ClasseService {
                 .orElseThrow(() -> new NotFoundException("Classe non trovata"));
         return classeResponseMapper.fromEntityToRe(classe, studenteResponseMapper, professoreResponseMapper);
     }
-    
-    //Per il metodo aggiornato nella ClasseController
+
+    // Per il metodo aggiornato nella ClasseController
     @Override
     public List<ClasseResponse> getClasseAssegnataProfessore(Long professoreId) throws NotFoundException {
-    ProfessoreEntity prof = professoreRepository.findById(professoreId)
-        .orElseThrow(() -> new NotFoundException("Professore non trovato"));
-        
-    List<ClasseEntity> classi = prof.getClassi();
+        ProfessoreEntity prof = professoreRepository.findById(professoreId)
+                .orElseThrow(() -> new NotFoundException("Professore non trovato"));
 
-    return classeResponseMapper.fromEntityListToReList(classi, studenteResponseMapper, professoreResponseMapper);
-}
+        List<ClasseEntity> classi = prof.getClassi();
+
+        List<ClasseResponse> responseList = classeResponseMapper.fromEntityListToReList(
+                classi, studenteResponseMapper, professoreResponseMapper);
+
+        // Svuota gli studenti, perché qui non li vuoi
+        responseList.forEach(classeResponse -> classeResponse.setStudenti(null));
+
+        return responseList;
+    }
+
 }

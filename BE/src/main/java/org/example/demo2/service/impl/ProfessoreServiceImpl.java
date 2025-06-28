@@ -8,13 +8,16 @@ import org.example.demo2.dao.repository.ProfessoreRepository;
 import org.example.demo2.dto.request.ProfessoreRequest;
 import org.example.demo2.dto.response.ProfessoreResponse;
 import org.example.demo2.service.general.ProfessoreService;
+import org.example.demo2.utils.enums.Specializzazione;
 import org.example.demo2.utils.exception.NotFoundException;
 import org.example.demo2.utils.mapper.impl.request.ProfessoreRequestMapper;
 import org.example.demo2.utils.mapper.impl.response.ProfessoreResponseMapper;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -27,10 +30,6 @@ public class ProfessoreServiceImpl implements ProfessoreService {
 
     @Override
     public ProfessoreResponse insert(ProfessoreRequest professoreRequest) {
-        if (professoreRequest.getId() != null) {
-            throw new IllegalArgumentException("L'id deve essere null per creare un nuovo professore");
-        }
-
         ProfessoreEntity professoreEntity = professoreRequestMapper.fromReToEntity(professoreRequest);
         professoreRepository.save(professoreEntity);
         return professoreResponseMapper.fromEntityToRe(professoreEntity);
@@ -56,27 +55,14 @@ public class ProfessoreServiceImpl implements ProfessoreService {
     }
 
     @Override
-    public ProfessoreResponse update1(ProfessoreRequest professoreRequest) throws NotFoundException {
-        ProfessoreEntity professoreEntity = professoreRepository.findById(professoreRequest.getId())
+    public ProfessoreResponse update(Long id, ProfessoreRequest professoreRequest) throws NotFoundException {
+        ProfessoreEntity professoreEntity = professoreRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Professore non esistente"));
 
-        // updateEntityFromDto è un metodo del mapper che aggiorna solo i campi
-        // necessari.
-        // Implementato updateEntityFromDto!
         professoreRequestMapper.updateEntityFromDto(professoreRequest, professoreEntity);
         professoreRepository.save(professoreEntity);
 
         return professoreResponseMapper.fromEntityToRe(professoreEntity);
-    }
-
-    @Override
-    public ProfessoreResponse update2(ProfessoreRequest professoreRequest) throws NotFoundException {
-        if (!professoreRepository.existsById(professoreRequest.getId())) {
-            throw new NotFoundException("Professore non esistente");
-        }
-        ProfessoreEntity entityUpdated = professoreRepository
-                .save(professoreRequestMapper.fromReToEntity(professoreRequest));
-        return professoreResponseMapper.fromEntityToRe(entityUpdated);
     }
 
     @Override
@@ -99,38 +85,37 @@ public class ProfessoreServiceImpl implements ProfessoreService {
     }
 
     /*
-     * Modificato per evitare problemi nel caso volessimo eliminare un professore
-     * che e asseganto a una classe
-     * Chiedo se e la cosa giusta da fare perche mi sembrerebbe giusto anche non
-     * lasciarlo fare per evitare
-     * di cancellare professori che essendo già assegnati a una classe non
-     * dovrebbero essere rimossi.
-     * Oppure lasciarli entrambi e lasciare la scelta per evenienza
+     * @Override
+     * public void delete(Long id) throws NotFoundException {
+     * ProfessoreEntity professore = professoreRepository.findById(id)
+     * .orElseThrow(() -> new NotFoundException("Professore non esistente"));
+     * 
+     * // Rimuovi la relazione ManyToMany da tutte le classi
+     * for (ClasseEntity classe : professore.getClassi()) {
+     * classe.getProfessori().remove(professore);
+     * }
+     * 
+     * professore.getClassi().clear(); // opzionale
+     * 
+     * professoreRepository.delete(professore);
+     * }
      */
+    //Posso solo staccarli dalle classi prima di cancellare professore se c'e una relazione
+    //Nella Many to Many la prassi e fare cosi mentre per una OneToMany
+    // Hibernate cancella i “figli” grazie a orphanRemoval = true oppure CascadeType.REMOVE
     @Override
     public void delete(Long id) throws NotFoundException {
         ProfessoreEntity professore = professoreRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Professore non esistente"));
 
-        // Rimuovi la relazione ManyToMany da tutte le classi
+        // Stacca dalle classi
         for (ClasseEntity classe : professore.getClassi()) {
             classe.getProfessori().remove(professore);
         }
+        professore.getClassi().clear();
 
-        professore.getClassi().clear(); // opzionale
-
-        professoreRepository.delete(professore); 
+        professoreRepository.delete(professore);
     }
-    // Nel dubbio lascio la vecchia versione standard qua
-    /*
-     * @Override
-     * public void delete(Long id) throws NotFoundException {
-     * if (!professoreRepository.existsById(id)) {
-     * throw new NotFoundException("Professore non esistente");
-     * }
-     * professoreRepository.deleteById(id);
-     * }
-     */
 
     // Modificato qeusto metodo che mi salvata solo a lato passivo e non
     // proprietario ecco spiegato il [] come risposta
@@ -176,6 +161,25 @@ public class ProfessoreServiceImpl implements ProfessoreService {
         }
         List<ProfessoreEntity> list = professoreRepository.findAllByClassi_Id(classeId);
         return professoreResponseMapper.fromEntityListToReList(list);
+    }
+
+    // Dato un range di date torna i provessori in quel range
+    @Override
+    public List<ProfessoreResponse> getProfessoriByDataNascitaBetween(LocalDate dataInizio, LocalDate dataFine) {
+        List<ProfessoreEntity> professori = professoreRepository.findByDataNascitaBetween(dataInizio, dataFine);
+        return professori.stream()
+                .map(professoreResponseMapper::fromEntityToRe)
+                .collect(Collectors.toList()); // -> raccoglie gli elementi del flusso e li mette dentro una List.
+    }
+
+    // Data la specializzazione torna tutti i professori che hanno quella
+    // specializzazione
+    @Override
+    public List<ProfessoreResponse> getProfessoriBySpecializzazione(Specializzazione specializzazione) {
+        List<ProfessoreEntity> professori = professoreRepository.findBySpecializzazione(specializzazione);
+        return professori.stream()
+                .map(professoreResponseMapper::fromEntityToRe)
+                .collect(Collectors.toList());
     }
 
 }

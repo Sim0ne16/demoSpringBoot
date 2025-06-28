@@ -6,7 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+
 
 @Entity
 @Data
@@ -37,9 +38,9 @@ public class StudenteEntity {
     @Column(nullable = false)
     private String cognome;
 
-    @Temporal(TemporalType.TIMESTAMP)
+    //@Temporal(TemporalType.TIMESTAMP)
     @Column(nullable = false, name = "data_nascita")
-    private LocalDateTime dataNascita;
+    private LocalDate dataNascita;
 
     @ManyToOne
     /*

@@ -10,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import jakarta.validation.Valid;
+
 import java.util.List;
 
 @RestController
@@ -33,11 +35,7 @@ public class ClasseController {
         return ResponseEntity.ok(classeService.getById(id));
     }
 
-    // Penso che il metodo che avevo nel professore per ricevere tutte le classi che
-    // erano attribuite a un professore abbia senso
-    // Non aveva senso che fosse nel controller del professore
-    // Di conseguenza ho scelto di tenerlo ma di spostarlo qua
-    // Metodo per ottenere tutte le classi assegnate al professore x.
+    //Ottenere professori assegnati a una classe
     @GetMapping("/assegnate-professore/{professoreId}")
     public ResponseEntity<List<ClasseResponse>> getClasseAssegnataProfessore(@PathVariable Long professoreId)
             throws NotFoundException {
@@ -52,10 +50,13 @@ public class ClasseController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-    // Aggiorna una classe
-    @PutMapping
-    public ResponseEntity<ClasseResponse> aggiornaClasse(@RequestBody ClasseRequest request) throws NotFoundException {
-        return ResponseEntity.ok(classeService.update1(request));
+    // Aggiorna una classe  MODIFICATO
+    @PutMapping("/{id}")
+    public ResponseEntity<ClasseResponse> aggiornaClasse(
+            @PathVariable Long id,
+            @Valid @RequestBody ClasseRequest request) throws NotFoundException {
+        ClasseResponse response = classeService.update(id, request);
+        return ResponseEntity.ok(response);
     }
 
     // Elimina una classe

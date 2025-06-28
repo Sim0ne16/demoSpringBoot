@@ -7,7 +7,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+
 
 @Data
 @AllArgsConstructor
@@ -33,19 +34,19 @@ public class StudenteRequest {
     Per attivare la validazione nel controller servira' il @Valid 
     */
 
-    private Long id;
+    //private Long id;
 
     @NotNull(message = "Il nome e' obbligatorio")
     @Size(min = 2, max = 50, message = "Il nome deve avere tra 2 e 50 caratteri")
     private String nome;
 
     @NotBlank(message = "Il cognome non puo' essere vuoto")
+    @Size(min = 2, max = 50, message = "Il congome deve avere tra 2 e 50 caratteri")
     private String cognome;
 
-    private LocalDateTime dataNascita;
+    private LocalDate dataNascita; //-> PAssato a Local Date 
 
-    @NotNull(message = "La classe è obbligatoria")
-
+    // @NotNull(message = "La classe è obbligatoria") -> NON più obbligatoria
     private Long classeId;
 
 

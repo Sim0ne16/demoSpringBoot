@@ -25,6 +25,7 @@ import java.util.List;
 public class ClasseEntity {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // Lasciamo che venga autogenerato dal DB
     private Long id;
 
     @Column(nullable = false)

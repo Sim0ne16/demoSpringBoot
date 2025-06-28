@@ -5,6 +5,7 @@ import org.example.demo2.utils.enums.Specializzazione;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,6 +19,8 @@ public interface ProfessoreRepository extends JpaRepository<ProfessoreEntity, Lo
 
     // Trova tutti i professori assegnati a una certa classe
     List<ProfessoreEntity> findAllByClassi_Id(Long classeId);
+
+    List<ProfessoreEntity> findByDataNascitaBetween(LocalDate dataInizio, LocalDate dataFine);
 
 
 }

@@ -4,26 +4,34 @@ TODO LIST :
 1) Modifica :  @DeleteMapping("/professori/{professoreId}/classi/rimuovi/{classeId}") , mi aspetto questo comportamento :
 Se elimino un professore a cascata verrà eliminato automaticamente dalle classi collegate, non devi farlo a mano guarda il Cascade.
 Non è una buona cosa che per eliminare un professore devo passare la classe a cui appartiene, quella deve essere una conseguenza data dalle relazioni.
-Deve funzionare come elimina studente, se elimino uno studente deve essere automaticamente rimosso anche dalle classi a cui appartiene che sia assegnato o meno.
+Deve funzionare come elimina studente, se elimino uno studente deve essere automaticamente rimosso anche dalle classi a cui appartiene che sia assegnato o meno. ->  Ok però non me lo fa fare se non tronco la relazione tra professore e classe prima di eliminare u professore perchè l'unica cosa che posso dire al CASCADE di fare e di cancellarmeli entrambi(REMOVE) ma non funziona per MANYTOMANY hybernate lo fa andare liscio solo su ONETOMANY .  
 
 2) Dai una pulita al codice, le nomenclature devono essere correte, commenti brevi ed efficaci del comportamento di un metodo non di cosa hai fatto
 idem quando fai un commit troppo lungo non va bene
-Esempio : getClasseAssegnataProfessore e poi torni una lista quindi dovrebbe essere getClassiProfessore... è importante che ti abitui a fare questa cosa, VARIABILI E METODI PARLANTI
+Esempio : getClasseAssegnataProfessore e poi torni una lista quindi dovrebbe essere getClassiProfessore... è importante che ti abitui a fare questa cosa, VARIABILI E METODI PARLANTI  -> DA FARE 
 
 3) Fixa le date.... e implementa un metodo nei professori che dato un range di date mi torni i corrispettivi professore,
-Esempio : voglio tutti i professori nati tra il 27 Dicembre 2001 e il 16 Gennaio 2005
+Esempio : voglio tutti i professori nati tra il 27 Dicembre 2001 e il 16 Gennaio 2005 -> FATTO!
 
-4) Implementa una API che data una specializzazione mi ritorna tutti i professori che la hanno
+4) Implementa una API che data una specializzazione mi ritorna tutti i professori che la hanno -> FATTO!
 
-5) Fixa la post dello studente e del professore in modo che rispetti questa logica :  la classeId può essere o non essere inclusa.. così ha senso che abbiamo il assegnaClasse
+5) Fixa la post dello studente e del professore in modo che rispetti questa logica :  la classeId può essere o non essere inclusa.. così ha senso che abbiamo il assegnaClasse  -> FATTO!
 
-6) Fixa la post della classe, non bisogna mai dover specificare l'id
+6) Fixa la post della classe, non bisogna mai dover specificare l'id -> FATTO
 
 7) Una volta fatto questo e testato che OGNI API funzioni, passa alla validazione degli oggetti che ti vengono passati nelle API hai 2 strade :
     6.1 : Usi validator custom
     6.2 : Usi Jakarta con @Valid
-
 Entrambe sono soluzioni utilizzate, a te la scelta.
+
+
+ Testato **Studenti** in seguito alle modifiche tutte le funzionalità danno indietto dati pertinenti
+ Testato **Professori** in seguito alle modifiche tutte le funzionalità danno indietto dati pertinenti   
+ Testato **Classi** in seguito alle modifiche tutte le funzionalità danno indietto dati pertinenti
+
+ Adesso devo capire come si fa e come funziona un "validator custom" che e la scelta con cui ho deciso di procedere.
+ Poi continuerò. 
+
 
 8) Implementa error handling, l'applicativo non si deve spaccare facilmente
 
@@ -33,7 +41,7 @@ Entrambe sono soluzioni utilizzate, a te la scelta.
 Per il resto hai fatto un lavoro discreto, puoi fare ancora di meglio, non testo le API che poi me le fai vedere te quindi ti do il beneficio del dubbio
 
 
-P.S. : Prego per i mapper.
+P.S. : Prego per i mapper. -> Grazie my Love 
 
 
 

@@ -4,11 +4,14 @@ import lombok.RequiredArgsConstructor;
 import org.example.demo2.dto.request.ProfessoreRequest;
 import org.example.demo2.dto.response.ProfessoreResponse;
 import org.example.demo2.service.general.ProfessoreService;
+import org.example.demo2.utils.enums.Specializzazione;
 import org.example.demo2.utils.exception.NotFoundException;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -47,6 +50,25 @@ public class ProfessoreController {
         return ResponseEntity.ok(list);
     }
 
+    // Restituisce tutti i professori nati in un intervallo di date
+    @GetMapping("/by-data-nascita")
+    public ResponseEntity<List<ProfessoreResponse>> getProfessoriByDataNascitaRange(
+            @RequestParam("dataInizio") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataInizio,
+            @RequestParam("dataFine") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataFine) {
+
+        List<ProfessoreResponse> result = professoreService.getProfessoriByDataNascitaBetween(dataInizio, dataFine);
+        return ResponseEntity.ok(result);
+    }
+
+    // Restituisce tutti i professori con una certa specializzazione
+    @GetMapping("/by-specializzazione")
+    public ResponseEntity<List<ProfessoreResponse>> getProfessoriBySpecializzazione(
+            @RequestParam("specializzazione") Specializzazione specializzazione) {
+
+        List<ProfessoreResponse> result = professoreService.getProfessoriBySpecializzazione(specializzazione);
+        return ResponseEntity.ok(result);
+    }
+
     // Crea Un Professore
     @PostMapping
     public ResponseEntity<ProfessoreResponse> creaProfessore(@RequestBody ProfessoreRequest request) {
@@ -62,27 +84,19 @@ public class ProfessoreController {
     }
 
     // Modifica un professore già esistente
-    @PutMapping
-    public ResponseEntity<ProfessoreResponse> aggiornaProfessore(@RequestBody ProfessoreRequest request)
-            throws NotFoundException {
-        ProfessoreResponse response = professoreService.update1(request);
+    @PutMapping("/{id}")
+    public ResponseEntity<ProfessoreResponse> aggiornaProfessore(
+            @PathVariable Long id,
+            @RequestBody ProfessoreRequest request) throws NotFoundException {
+        ProfessoreResponse response = professoreService.update(id, request);
         return ResponseEntity.ok(response);
     }
 
-    //  No
-    @DeleteMapping("/professori/{professoreId}/classi/rimuovi/{classeId}")
-    public ResponseEntity<ProfessoreResponse> rimuoviClasseDaProfessore(
-            @PathVariable Long professoreId,
-            @PathVariable Long classeId) throws NotFoundException {
-        return ResponseEntity.ok(professoreService.rimuoviClasse(professoreId, classeId));
-    }
-    /*
-    //Delete semplice -> Guarda in ProfessoreServiceImpl per info a riguardo.  
+    // Delete Professori
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteProfessore(@PathVariable Long id) throws NotFoundException {
         professoreService.delete(id);
-        return ResponseEntity.noContent().build(); // 204 No Content
+        return ResponseEntity.noContent().build();
     }
-    */
-    
+
 }

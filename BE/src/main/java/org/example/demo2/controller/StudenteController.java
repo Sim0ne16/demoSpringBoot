@@ -52,18 +52,23 @@ public class StudenteController {
     }
 
     // esempio di sintassi di chiamata -> http://localhost:8080/studente/Mario/Rossi
-    @GetMapping(path = "/{nome}/{cognome}")
-    private ResponseEntity<StudenteResponse> getStudenteByNomeCognome(@PathVariable("nome") String name,
-            @PathVariable("cognome") String lastName) {
-        try {
-            StudenteResponse studenteResponse = studenteService.getByNameAndLastName(name, lastName);
-            return ResponseEntity.ok(studenteResponse);
-        } catch (NotFoundException e) {
-            e.printStackTrace();
-            return ResponseEntity.notFound().build();
-        }
-    }
-
+    /*
+     * @GetMapping(path = "/{nome}/{cognome}")
+     * private ResponseEntity<StudenteResponse>
+     * getStudenteByNomeCognome(@PathVariable("nome") String name,
+     * 
+     * @PathVariable("cognome") String lastName) {
+     * try {
+     * StudenteResponse studenteResponse =
+     * studenteService.getByNameAndLastName(name, lastName);
+     * return ResponseEntity.ok(studenteResponse);
+     * } catch (NotFoundException e) {
+     * e.printStackTrace();
+     * return ResponseEntity.notFound().build();
+     * }
+     * }
+     */
+    
     /*
      * Stesso metodo precedente ma con utilizzo di QueryParam invece che
      * PathVariable, il query Param a differenza del
@@ -73,12 +78,12 @@ public class StudenteController {
      * http://localhost:8080/studente/fullname?name=Mario&lastName=Rossi
      */
     @GetMapping(path = "/nome-completo")
-    private ResponseEntity<StudenteResponse> getNomeCompleto(
+    private ResponseEntity<List<StudenteResponse>> getNomeCompleto(
             @RequestParam("nome") String name,
             @RequestParam("cognome") String lastName) {
         try {
-            StudenteResponse studenteResponse = studenteService.getByNameAndLastName(name, lastName);
-            return new ResponseEntity<>(studenteResponse, HttpStatus.OK);
+            List<StudenteResponse> studenti = studenteService.getByNameAndLastName(name, lastName);
+            return new ResponseEntity<>(studenti, HttpStatus.OK);
         } catch (NotFoundException e) {
             e.printStackTrace();
             return ResponseEntity.notFound().build();
@@ -102,58 +107,53 @@ public class StudenteController {
      * corrispondere ai campi che abbiamo definito nella classe java (in questo caso
      * la classe AthleteRest)
      */
-    @PostMapping
-    private ResponseEntity<StudenteResponse> creaStudente(@RequestBody StudenteRequest studenteRequest) {
-        // StudenteValidator.validate(studenteRequest)
-        if (studenteRequest.getId() != null) {
-            throw new IllegalArgumentException("Per creare un nuovo studente l'id deve essere null");
-        }
-        StudenteResponse studenteResponse = studenteService.insert(studenteRequest);
 
-        /*
-         * Perché tornare l'URI?
-         * Standard HTTP:
-         * La specifica HTTP dice che, dopo aver creato una risorsa (ad esempio con un
-         * POST), il server dovrebbe restituire lo status 201 Created
-         * e includere nel campo header Location l'URI della nuova risorsa.
-         *
-         * Comunicazione chiara al client:
-         * Il client sa esattamente dove può trovare o accedere a quella risorsa creata.
-         * Ad esempio, se crei un nuovo utente, l'URI potrebbe essere qualcosa come
-         * /users/123.
-         * Tornare quell’URI aiuta il client a fare subito operazioni future su
-         * quell’utente (GET, PUT, DELETE).
-         *
-         * Best practice RESTful:
-         * In un’API RESTful ben progettata, risorse e URI sono fondamentali per la
-         * navigazione e manipolazione.
-         * Restituire l’URI della risorsa è una buona prassi per favorire
-         * l’auto-documentazione dell’API e la facilità d’uso.
-         */
+    // Modificato per L'ID
+    @PostMapping
+    private ResponseEntity<StudenteResponse> creaStudente(@RequestBody StudenteRequest studenteRequest)
+            throws NotFoundException {
+
+        StudenteResponse studenteResponse = studenteService.insert(studenteRequest);
 
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
                 .buildAndExpand(studenteResponse.getId())
                 .toUri();
 
-        return ResponseEntity.created(location).build();
+        return ResponseEntity.created(location).body(studenteResponse);
     }
+    /*
+     * Perché tornare l'URI?
+     * Standard HTTP:
+     * La specifica HTTP dice che, dopo aver creato una risorsa (ad esempio con un
+     * POST), il server dovrebbe restituire lo status 201 Created
+     * e includere nel campo header Location l'URI della nuova risorsa.
+     *
+     * Comunicazione chiara al client:
+     * Il client sa esattamente dove può trovare o accedere a quella risorsa creata.
+     * Ad esempio, se crei un nuovo utente, l'URI potrebbe essere qualcosa come
+     * /users/123.
+     * Tornare quell’URI aiuta il client a fare subito operazioni future su
+     * quell’utente (GET, PUT, DELETE).
+     *
+     * Best practice RESTful:
+     * In un’API RESTful ben progettata, risorse e URI sono fondamentali per la
+     * navigazione e manipolazione.
+     * Restituire l’URI della risorsa è una buona prassi per favorire
+     * l’auto-documentazione dell’API e la facilità d’uso.
+     */
 
     /*
      * Il verbo Put indica un update dell'entità nel database, a differenza della
      * Post dobbiamo gestire l'eccezzione
      * che abbiamo specificato nel service
      */
-    @PutMapping
-    private ResponseEntity<StudenteResponse> aggiornaStudente(@RequestBody StudenteRequest studenteRequest) {
-        try {
-            // StudenteValidator.validate(studenteRequest)
-            StudenteResponse studenteResponse = studenteService.update(studenteRequest);
-            return new ResponseEntity<>(studenteResponse, HttpStatus.OK);
-        } catch (NotFoundException e) {
-            e.printStackTrace();
-            return ResponseEntity.notFound().build();
-        }
+    @PutMapping("/{id}")
+    public ResponseEntity<StudenteResponse> aggiornaStudente(
+            @PathVariable Long id,
+            @RequestBody StudenteRequest request) throws NotFoundException {
+        StudenteResponse response = studenteService.update(id, request);
+        return ResponseEntity.ok(response);
     }
 
     // Assegna una classe a uno studente

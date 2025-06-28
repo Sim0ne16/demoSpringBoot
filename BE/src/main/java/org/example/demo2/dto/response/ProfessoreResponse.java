@@ -5,7 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.example.demo2.utils.enums.Specializzazione;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 
 @Data
@@ -16,7 +16,7 @@ public class ProfessoreResponse {
     private Long id;
     private String nome;
     private String cognome;
-    private LocalDateTime dataNascita;
+    private LocalDate dataNascita;
     private Specializzazione specializzazione;
     private List<ClasseResponse> classi;
 

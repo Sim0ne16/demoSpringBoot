@@ -14,8 +14,10 @@ import java.util.Optional;
 public interface StudenteRepository extends JpaRepository<StudenteEntity, Long> {
 
     //L'optional ci aiuta con i casi dove non abbiamo riscontro lato DB
-    Optional<StudenteEntity> findByNomeAndCognome(String nome, String cognome);
-
+    //Optional<StudenteEntity> findByNomeAndCognome(String nome, String cognome);
+    //Rimosso Optional per provare a sistemare un problema che mi richiedeva che non fosse Optional
+    List<StudenteEntity> findByNomeAndCognome(String nome, String cognome);
+    
     //Se vogliamo creare delle query personalizzate
     @Query("SELECT student FROM StudenteEntity student WHERE student.id = :id")
     Optional<StudenteEntity> findByIdCustom(@Param("id") Long id);

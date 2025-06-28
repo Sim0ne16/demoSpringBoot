@@ -14,7 +14,7 @@ import org.example.demo2.utils.mapper.impl.response.StudenteResponseMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -26,8 +26,17 @@ public class StudenteServiceImpl implements StudenteService {
     private final ClasseRepository classeRepository;
 
     @Override
-    public StudenteResponse insert(StudenteRequest studenteRequest) {
+    public StudenteResponse insert(StudenteRequest studenteRequest) throws NotFoundException {
         StudenteEntity studenteEntity = studenteRequestMapper.fromReToEntity(studenteRequest);
+
+        // Se classeId è presente, recupera e assegna la classe
+        if (studenteRequest.getClasseId() != null) {
+            ClasseEntity classe = classeRepository.findById(studenteRequest.getClasseId())
+                    .orElseThrow(
+                            () -> new NotFoundException("Classe non trovata con id: " + studenteRequest.getClasseId()));
+            studenteEntity.setClasse(classe);
+        }
+        // Salva lo studente
         StudenteEntity savedEntity = studenteRepository.save(studenteEntity);
         return studenteResponseMapper.fromEntityToRe(savedEntity);
     }
@@ -43,13 +52,10 @@ public class StudenteServiceImpl implements StudenteService {
     }
 
     @Override
-    public StudenteResponse update(StudenteRequest studenteRequest) throws NotFoundException {
-        StudenteEntity studenteEntity = studenteRepository.findById(studenteRequest.getId())
-                .orElseThrow(() -> new NotFoundException("Studente non trovato con id " + studenteRequest.getId()));
+    public StudenteResponse update(Long id, StudenteRequest studenteRequest) throws NotFoundException {
+        StudenteEntity studenteEntity = studenteRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Studente non trovato con id " + id));
 
-        // updateEntityFromDto è un metodo del mapper che aggiorna solo i campi
-        // necessari.
-        //Aggiunto nella StudenteRespondeMapper 
         studenteRequestMapper.updateEntityFromDto(studenteRequest, studenteEntity);
         studenteRepository.save(studenteEntity);
 
@@ -74,15 +80,16 @@ public class StudenteServiceImpl implements StudenteService {
     }
 
     @Override
-    public StudenteResponse getByNameAndLastName(String nome, String cognome) throws NotFoundException {
+    public List<StudenteResponse> getByNameAndLastName(String nome, String cognome) throws NotFoundException {
+        List<StudenteEntity> studenti = studenteRepository.findByNomeAndCognome(nome, cognome);
 
-        Optional<StudenteEntity> studenteEntity = studenteRepository.findByNomeAndCognome(nome, cognome);
-
-        if (!studenteEntity.isPresent()) {
-            throw new NotFoundException("Studente non esistente");
+        if (studenti.isEmpty()) {
+            throw new NotFoundException("Nessuno studente trovato con nome " + nome + " e cognome " + cognome);
         }
 
-        return studenteResponseMapper.fromEntityToRe(studenteEntity.get());
+        return studenti.stream()
+                .map(studenteResponseMapper::fromEntityToRe)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -103,7 +110,6 @@ public class StudenteServiceImpl implements StudenteService {
 
         return studenteResponseMapper.fromEntityToRe(updated);
     }
-
 
     @Override
     public List<StudenteResponse> getAllByClass(Long classeId) throws NotFoundException {

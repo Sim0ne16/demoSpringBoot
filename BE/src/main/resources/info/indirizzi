@@ -5,4 +5,4 @@ Una cosa utile se vi dovesse servire che a me capita spesso e quando avvio il pr
 Allora apro il CMD come amministratore ci butto questo   ->     netstat -aon | findstr :8080 
 Vedo cosa lo occupa e lo killo con   ->   taskkill /PID 12345 /F    -> dove i numeri sono l'occupante abusivo
 
-( Perchè usi visual studio merda )  ->  Mai come i politici che rubano! -> comunque il nuoto è uno sport completo
+( Perchè usi visual studio merda )  ->  Mai come i politici che rubano! -> comunque il nuoto è uno sport completo -> Eh si, non ci sono più le mezze stagioni

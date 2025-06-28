@@ -5,17 +5,25 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.example.demo2.utils.enums.Specializzazione;
 
-import java.time.LocalDateTime;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+
+import java.time.LocalDate;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class ProfessoreRequest {
 
-    private Long id;
+    // private Long id;
+    @NotNull(message = "Il nome e' obbligatorio")
+    @Size(min = 2, max = 50, message = "Il nome deve avere tra 2 e 50 caratteri")
     private String nome;
+    @NotBlank(message = "Il cognome non puo' essere vuoto")
+    @Size(min = 2, max = 50, message = "Il congome deve avere tra 2 e 50 caratteri")
     private String cognome;
-    private LocalDateTime dataNascita;
+    private LocalDate dataNascita; // -> Passato a LocalDate
     private Specializzazione specializzazione;
 
 }
