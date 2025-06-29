@@ -52,9 +52,7 @@ public class ProfessoreEntity {
      * Nelle relazioni bidirezionali (cioè quando due entità si "conoscono" tra
      * loro),
      * dobbiamo dire a JPA dove si trova il "lato proprietario" della relazione.
-     */
-
-    /*
+     *
      * Per lasciar fare al DB tutto nella eliminazione del professore in relazione
      * con una Classe ho deciso di modificarlo cosi:
      * 
