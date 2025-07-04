@@ -9,6 +9,9 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
+import org.example.demo2.validator.IniziaConMaiuscola;
+import org.example.demo2.validator.Maggiorenne;
+
 
 @Data
 @AllArgsConstructor
@@ -38,12 +41,15 @@ public class StudenteRequest {
 
     @NotNull(message = "Il nome e' obbligatorio")
     @Size(min = 2, max = 50, message = "Il nome deve avere tra 2 e 50 caratteri")
+    @IniziaConMaiuscola
     private String nome;
 
     @NotBlank(message = "Il cognome non puo' essere vuoto")
     @Size(min = 2, max = 50, message = "Il congome deve avere tra 2 e 50 caratteri")
+    @IniziaConMaiuscola
     private String cognome;
-
+    
+    @Maggiorenne
     private LocalDate dataNascita; //-> PAssato a Local Date 
 
     // @NotNull(message = "La classe è obbligatoria") -> NON più obbligatoria

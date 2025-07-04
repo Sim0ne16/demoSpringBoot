@@ -14,7 +14,7 @@ import java.util.List;
 public class ClasseResponse {
 
     private Long id;
-    private char identificativo;
+    private String identificativo;
     private String grado;
     private List<StudenteResponse> studenti;
     private List<ProfessoreResponse> professori;

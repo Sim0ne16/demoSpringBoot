@@ -45,7 +45,7 @@ public class ClasseController {
 
     // Crea nuova classe
     @PostMapping
-    public ResponseEntity<ClasseResponse> inserisciClasse(@RequestBody ClasseRequest request) {
+    public ResponseEntity<ClasseResponse> inserisciClasse(@Valid @RequestBody ClasseRequest request) {
         ClasseResponse response = classeService.insert(request);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }

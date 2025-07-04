@@ -5,10 +5,11 @@ import org.example.demo2.dto.request.StudenteRequest;
 import org.example.demo2.dto.response.StudenteResponse;
 import org.example.demo2.service.general.StudenteService;
 import org.example.demo2.utils.exception.NotFoundException;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import jakarta.validation.Valid;
 
 import java.net.URI;
 import java.util.List;
@@ -77,17 +78,14 @@ public class StudenteController {
      * esempio di sintassi di chiamata ->
      * http://localhost:8080/studente/fullname?name=Mario&lastName=Rossi
      */
-    @GetMapping(path = "/nome-completo")
-    private ResponseEntity<List<StudenteResponse>> getNomeCompleto(
+    
+     // Restituisce studenti per nome e cognome
+    @GetMapping("/nome-completo")
+    public ResponseEntity<List<StudenteResponse>> getNomeCompleto(
             @RequestParam("nome") String name,
-            @RequestParam("cognome") String lastName) {
-        try {
-            List<StudenteResponse> studenti = studenteService.getByNameAndLastName(name, lastName);
-            return new ResponseEntity<>(studenti, HttpStatus.OK);
-        } catch (NotFoundException e) {
-            e.printStackTrace();
-            return ResponseEntity.notFound().build();
-        }
+            @RequestParam("cognome") String lastName) throws NotFoundException {
+        List<StudenteResponse> studenti = studenteService.getByNameAndLastName(name, lastName);
+        return ResponseEntity.ok(studenti);
     }
 
     // In base all'ID della classe restituisce gli studenti che le appartengono
@@ -110,7 +108,7 @@ public class StudenteController {
 
     // Modificato per L'ID
     @PostMapping
-    private ResponseEntity<StudenteResponse> creaStudente(@RequestBody StudenteRequest studenteRequest)
+    private ResponseEntity<StudenteResponse> creaStudente(@Valid @RequestBody StudenteRequest studenteRequest)
             throws NotFoundException {
 
         StudenteResponse studenteResponse = studenteService.insert(studenteRequest);
@@ -151,7 +149,7 @@ public class StudenteController {
     @PutMapping("/{id}")
     public ResponseEntity<StudenteResponse> aggiornaStudente(
             @PathVariable Long id,
-            @RequestBody StudenteRequest request) throws NotFoundException {
+            @Valid @RequestBody StudenteRequest request) throws NotFoundException {
         StudenteResponse response = studenteService.update(id, request);
         return ResponseEntity.ok(response);
     }
@@ -164,16 +162,12 @@ public class StudenteController {
         return ResponseEntity.ok(updated);
     }
 
-    // Con il verbo Delete indichiamo l'eliminazione di un'entità nel database
-    @DeleteMapping(path = "/{id}")
-    private ResponseEntity<Void> eliminaStudente(@PathVariable Long id) {
-        try {
-            studenteService.delete(id);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        } catch (NotFoundException e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+    // Elimina uno studente
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> eliminaStudente(@PathVariable Long id) throws NotFoundException {
+        studenteService.delete(id);
+        return ResponseEntity.noContent().build();
     }
-
 }
+
+

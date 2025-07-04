@@ -29,7 +29,7 @@ public class ClasseEntity {
     private Long id;
 
     @Column(nullable = false)
-    private char identificativo;
+    private String identificativo;
 
     @Column(nullable = false)
     private String grado;

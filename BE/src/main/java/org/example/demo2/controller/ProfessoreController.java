@@ -11,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import jakarta.validation.Valid;
+
 import java.time.LocalDate;
 import java.util.List;
 
@@ -29,20 +31,13 @@ public class ProfessoreController {
     }
 
     // Restituisce i professori in base all'ID
-    @GetMapping(path = "/{id}")
-    private ResponseEntity<ProfessoreResponse> getProfessoreById(@PathVariable Long id) {
-        try {
-            ProfessoreResponse professore = professoreService.getById(id);
-            return new ResponseEntity<>(professore, HttpStatus.OK);
-        } catch (NotFoundException e) {
-            // e' buona pratica loggare il perche' dell'errore etc
-            // logger.info("Chiamata esplosa perche'...)
-            e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+    @GetMapping("/{id}")
+    public ResponseEntity<ProfessoreResponse> getProfessoreById(@PathVariable Long id) throws NotFoundException {
+        ProfessoreResponse professore = professoreService.getById(id);
+        return ResponseEntity.ok(professore);
     }
 
-    // In base all'ID della classe restituisce i professori che le appartengono
+    // Restituisce professori di una classe
     @GetMapping("/classe/{classeId}")
     public ResponseEntity<List<ProfessoreResponse>> getByClass(
             @PathVariable Long classeId) throws NotFoundException {
@@ -50,7 +45,7 @@ public class ProfessoreController {
         return ResponseEntity.ok(list);
     }
 
-    // Restituisce tutti i professori nati in un intervallo di date
+    // Restituisce professori in un intervallo di date di nascita
     @GetMapping("/by-data-nascita")
     public ResponseEntity<List<ProfessoreResponse>> getProfessoriByDataNascitaRange(
             @RequestParam("dataInizio") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataInizio,
@@ -60,7 +55,7 @@ public class ProfessoreController {
         return ResponseEntity.ok(result);
     }
 
-    // Restituisce tutti i professori con una certa specializzazione
+    // Restituisce professori per specializzazione
     @GetMapping("/by-specializzazione")
     public ResponseEntity<List<ProfessoreResponse>> getProfessoriBySpecializzazione(
             @RequestParam("specializzazione") Specializzazione specializzazione) {
@@ -69,9 +64,9 @@ public class ProfessoreController {
         return ResponseEntity.ok(result);
     }
 
-    // Crea Un Professore
+    // Crea un nuovo professore
     @PostMapping
-    public ResponseEntity<ProfessoreResponse> creaProfessore(@RequestBody ProfessoreRequest request) {
+    public ResponseEntity<ProfessoreResponse> creaProfessore(@Valid @RequestBody ProfessoreRequest request) {
         ProfessoreResponse response = professoreService.insert(request);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
@@ -83,16 +78,16 @@ public class ProfessoreController {
         return ResponseEntity.ok(professoreService.assegnaClasse(professoreId, classeId));
     }
 
-    // Modifica un professore già esistente
+    // Modifica un professore esistente
     @PutMapping("/{id}")
     public ResponseEntity<ProfessoreResponse> aggiornaProfessore(
             @PathVariable Long id,
-            @RequestBody ProfessoreRequest request) throws NotFoundException {
+            @Valid @RequestBody ProfessoreRequest request) throws NotFoundException {
         ProfessoreResponse response = professoreService.update(id, request);
         return ResponseEntity.ok(response);
     }
 
-    // Delete Professori
+    // Elimina un professore
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteProfessore(@PathVariable Long id) throws NotFoundException {
         professoreService.delete(id);

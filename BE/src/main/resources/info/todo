@@ -5,6 +5,8 @@ Per il passo 1 ) :
 La soluzione che hai scelto allora potrebbe essere correta perche vedo che devi rimuovere le relazioni manualmente prima della delete,
 perché Hibernate non gestisce automaticamente la pulizia della tabella di join in una @ManyToMany bidirezionale. GJ
 
+Come avevo scritto in precedenza nel MTM per farlo più pulito possibile devi fare così mentre per il OTM puoi tranquillamente lasciar fare a hibernate con la CASCADE.
+
 2) Dai una pulita al codice, le nomenclature devono essere correte, commenti brevi ed efficaci del comportamento di un metodo non di cosa hai fatto
 idem quando fai un commit troppo lungo non va bene
 Esempio : getClasseAssegnataProfessore e poi torni una lista quindi dovrebbe essere getClassiProfessore... è importante che ti abitui a fare questa cosa, VARIABILI E METODI PARLANTI  -> DA FARE
@@ -13,6 +15,13 @@ Esempio : getClasseAssegnataProfessore e poi torni una lista quindi dovrebbe ess
     6.1 : Usi validator custom
     6.2 : Usi Jakarta con @Valid
 Entrambe sono soluzioni utilizzate, a te la scelta.
+
+**Per Validator**  -> Aggiunto questo nel pom e tolto jakarta.validation che e gia compreso in questo
+        <dependency>
+           <groupId>org.springframework.boot</groupId>
+           <artifactId>spring-boot-starter-validation</artifactId>
+        </dependency>
+Creati tutti i validator che mi venivano in mente, e implementati nelle POST e nelle PUT dei controller 
 
 
  Testato **Studenti** in seguito alle modifiche tutte le funzionalità danno indietto dati pertinenti
@@ -24,6 +33,20 @@ Entrambe sono soluzioni utilizzate, a te la scelta.
 
 
 8) Implementa error handling, l'applicativo non si deve spaccare facilmente
+Scelto di fare un @ControllerAdvice
+
+Cattura tutte le NotFoundException in automatico.
+
+Risponde sempre con 404 + messaggio coerente.
+
+Non serve più try-catch in tutti i metodi. -> tolti tutti nei controller 
+
+Scelto di dare all'utente un messaggio pulito mentre noi abbiamo lo stacktrace completi nei log 
+
+Se non ho capito male quando sei in produzione hai anche un file di configurazione per i LogBack che si aggiorno ogni tot cosi non vanno perduti, ma non credo  sia una buona idea implementarlo anche noi mi da idea di essere una cosa extra non utile visto che non siamo in produzione e il programma non deve stare in esecuzione di continuo.
+
+Non so se mi sono perso io in cose che non erano neccessarie o meno 
+
 
 9) Crea dei test con JUnit e Mockito, testa la correttezza delle API, poi ne parliamo
 
